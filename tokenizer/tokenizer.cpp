@@ -3,7 +3,7 @@
 #include <cctype>
 #include <sstream>
 
-namespace miniplc0 {
+namespace c0 {
 
 	std::pair<std::optional<Token>, std::optional<CompilationError>> Tokenizer::NextToken() {
 		if (!_initialized)

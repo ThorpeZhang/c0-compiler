@@ -8,7 +8,7 @@
 #include <string>
 #include <climits>
 
-namespace miniplc0 {
+namespace c0 {
 	// This is a simplified version of miniplc0 vm implementation for testing.
 	class VM {
 	private:
