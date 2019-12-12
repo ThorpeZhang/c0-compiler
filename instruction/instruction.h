@@ -27,6 +27,7 @@ namespace c0 {
 		RET, IRET, DRET, ARET,
 		IPRINT, DPRINT, CPRINT, SPRINT, PRINTL,
 		ISCAN, DSCAN, CSCAN,
+		ILL,
 	};
 	
 	class Instruction final {
@@ -35,10 +36,11 @@ namespace c0 {
 	public:
 		friend void swap(Instruction& lhs, Instruction& rhs);
 	public:
-		Instruction(Operation opr, int32_t x) : _opr(opr), _x(x) {}
+		Instruction(Operation opr, int32_t x) : _opr(opr), _x(x), _option(-1) {}
+        Instruction(Operation opr, int32_t x, int32_t option) : _opr(opr), _x(x), _option(option) {}
 		
-		//Instruction() : Instruction(Operation::ILL, 0){}
-		Instruction(const Instruction& i) { _opr = i._opr; _x = i._x; }
+		Instruction() : Instruction(Operation::ILL, 0){}
+		Instruction(const Instruction& i) { _opr = i._opr; _x = i._x; _option = i._option; }
 		Instruction(Instruction&& i) :Instruction() { swap(*this, i); }
 		Instruction& operator=(Instruction i) { swap(*this, i); return *this; }
 		bool operator==(const Instruction& i) const { return _opr == i._opr && _x == i._x; }
@@ -48,6 +50,7 @@ namespace c0 {
 	private:
 		Operation _opr;
 		int32_t _x;
+		int32_t _option;
 	};
 
 	inline void swap(Instruction& lhs, Instruction& rhs) {
