@@ -187,6 +187,11 @@ namespace c0 {
                         else
                             current_state = DFAState ::IDENTIFIER_STATE;
                     }
+
+                    else if(ch == '.') {
+                        ss << ch;
+                        current_state = DFAState ::DOUBLE_VALUE_STATE;
+                    }
                         // 如果读到的字符不是上述情况之一，则回退读到的字符，并解析已经读到的字符串为整数
                         //     解析成功则返回无符号整数类型的token，否则返回编译错误
                     else {
@@ -218,6 +223,49 @@ namespace c0 {
                     }
                     break;
                 }
+
+                case DOUBLE_VALUE_STATE:{
+                    if(!current_char.has_value()) {
+                        double val;
+                        ss >> val;
+                        return std::make_pair(std::make_optional<Token>(TokenType::DOUBLE_VALUE, val, pos, currentPos()), std::optional<CompilationError>());
+                    }
+
+                    auto ch = current_char.value();
+                    if(isdigit(ch))
+                        ss << ch;
+                    else if(ch == 'e' || ch == 'E') {
+                        ss << ch;
+                        current_state = DFAState::EXPONENT_STATE;
+                    }
+                    else {
+                        unreadLast();
+                        double val;
+                        ss >> val;
+                        return std::make_pair(std::make_optional<Token>(TokenType::DOUBLE_VALUE, val, pos, currentPos()), std::optional<CompilationError>());
+                    }
+                    break;
+                }
+
+                case EXPONENT_STATE:{
+                    if(!current_char.has_value()) {
+                        double val;
+                        ss >> val;
+                        return std::make_pair(std::make_optional<Token>(TokenType::DOUBLE_VALUE, val, pos, currentPos()), std::optional<CompilationError>());
+                    }
+
+                    auto ch = current_char.value();
+                    if(isdigit(ch))
+                        ss << ch;
+                    else {
+                        unreadLast();
+                        double val;
+                        ss >> val;
+                        return std::make_pair(std::make_optional<Token>(TokenType::DOUBLE_VALUE, val, pos, currentPos()), std::optional<CompilationError>());
+                    }
+                    break;
+                }
+
                 case IDENTIFIER_STATE: {
                     // 如果当前已经读到了文件尾，则解析已经读到的字符串
                     //     如果解析结果是关键字，那么返回对应关键字的token，否则返回标识符的token

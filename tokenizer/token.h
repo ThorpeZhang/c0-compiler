@@ -45,8 +45,8 @@ namespace c0 {
 		RIGHT_BRACKET,
 		LEFT_BRACE,
 		RIGHT_BRACE,
-        SINGLE_QUOTATION,
-        DOUBLE_QUOTATION,
+        //SINGLE_QUOTATION,
+        //DOUBLE_QUOTATION,
         NOT_EQUAL_SIGN,
         GREATER_SIGN,
         LESS_SIGN,
@@ -56,7 +56,7 @@ namespace c0 {
         STRING_VALUE,
         CHAR_VALUE,
 		//浮点数
-		//DOUBLE_VALUE,
+		DOUBLE_VALUE,
         /*
         //转义字符
         ESCAPE_t,

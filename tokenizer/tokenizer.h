@@ -39,8 +39,8 @@ namespace c0 {
             LESS_SIGN_STATE,
             CHAR_VALUE_STATE,
             STRING_VALUE_STATE,
-			//DOUBLE_VALUE_STATE,
-			//EXPONENT_STATE,
+			DOUBLE_VALUE_STATE,
+			EXPONENT_STATE,
 		};
 	public:
 		Tokenizer(std::istream& ifs)
