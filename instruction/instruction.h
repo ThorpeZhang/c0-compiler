@@ -36,6 +36,7 @@ namespace c0 {
 	public:
 		friend void swap(Instruction& lhs, Instruction& rhs);
 	public:
+        Instruction(Operation opr) : _opr(opr), _x(-1), _option(-1) {}
 		Instruction(Operation opr, int32_t x) : _opr(opr), _x(x), _option(-1) {}
         Instruction(Operation opr, int32_t x, int32_t option) : _opr(opr), _x(x), _option(option) {}
 		
