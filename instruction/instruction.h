@@ -6,15 +6,27 @@
 namespace c0 {
 
 	enum Operation {
-		ILL = 0,
-		LIT,
-		LOD,
-		STO,
-		ADD,
-		SUB,
-		MUL,
-		DIV,
-		WRT
+		NOP = 0,
+		BIPUSH, IPUSH,
+		POP, POP2, POPN,
+		DUP, DUP2,
+		LOADC, LOADA,
+		NEW, SNEW,
+		ILOAD, DLOAD, ALOAD,
+		ISTORE, DSTORE, ASTORE, 
+		IASTORE, DASTORE, AASTORE,
+		IADD, DADD,
+		ISUB, DSUB,
+		IMUL, DMUL,
+		IDIV, DDIV,
+		INEG, DNEG,
+		ICMP, DCMP,
+		I2D, D2I, I2C,
+		JMP, JE, JNE, JL, JGE, JG, JLE,
+		CALL,
+		RET, IRET, DRET, ARET,
+		IPRINT, DPRINT, CPRINT, SPRINT, PRINTL,
+		ISCAN, DSCAN, CSCAN,
 	};
 	
 	class Instruction final {
@@ -25,7 +37,7 @@ namespace c0 {
 	public:
 		Instruction(Operation opr, int32_t x) : _opr(opr), _x(x) {}
 		
-		Instruction() : Instruction(Operation::ILL, 0){}
+		//Instruction() : Instruction(Operation::ILL, 0){}
 		Instruction(const Instruction& i) { _opr = i._opr; _x = i._x; }
 		Instruction(Instruction&& i) :Instruction() { swap(*this, i); }
 		Instruction& operator=(Instruction i) { swap(*this, i); return *this; }
