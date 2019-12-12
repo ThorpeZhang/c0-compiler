@@ -56,30 +56,6 @@ CMAKE_BINARY_DIR = /Users/zhangtaotao/Projects/c0/c0-compiler/cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -P cmake_install.cmake
-.PHONY : install/fast
-
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -89,17 +65,6 @@ list_install_components:
 list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # Special rule for the target install/local
 install/local: preinstall
@@ -135,6 +100,41 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	"/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/bin/cmake" -P cmake_install.cmake
+.PHONY : install/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/zhangtaotao/Projects/c0/c0-compiler/cmake-build-debug/CMakeFiles /Users/zhangtaotao/Projects/c0/c0-compiler/cmake-build-debug/CMakeFiles/progress.marks
@@ -168,43 +168,43 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named c0
+# Target rules for targets named cc0_test
 
 # Build rule for target.
-c0: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 c0
-.PHONY : c0
+cc0_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cc0_test
+.PHONY : cc0_test
 
 # fast build rule for target.
-c0/fast:
-	$(MAKE) -f CMakeFiles/c0.dir/build.make CMakeFiles/c0.dir/build
-.PHONY : c0/fast
+cc0_test/fast:
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/build
+.PHONY : cc0_test/fast
 
 #=============================================================================
-# Target rules for targets named c0_test
+# Target rules for targets named cc0
 
 # Build rule for target.
-c0_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 c0_test
-.PHONY : c0_test
+cc0: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cc0
+.PHONY : cc0
 
 # fast build rule for target.
-c0_test/fast:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/build
-.PHONY : c0_test/fast
+cc0/fast:
+	$(MAKE) -f CMakeFiles/cc0.dir/build.make CMakeFiles/cc0.dir/build
+.PHONY : cc0/fast
 
 #=============================================================================
-# Target rules for targets named c0_lib
+# Target rules for targets named cc0_lib
 
 # Build rule for target.
-c0_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 c0_lib
-.PHONY : c0_lib
+cc0_lib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 cc0_lib
+.PHONY : cc0_lib
 
 # fast build rule for target.
-c0_lib/fast:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/build
-.PHONY : c0_lib/fast
+cc0_lib/fast:
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/build
+.PHONY : cc0_lib/fast
 
 #=============================================================================
 # Target rules for targets named fmt
@@ -225,7 +225,7 @@ analyser/analyser.o: analyser/analyser.cpp.o
 
 # target to build an object file
 analyser/analyser.cpp.o:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/analyser/analyser.cpp.o
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/analyser/analyser.cpp.o
 .PHONY : analyser/analyser.cpp.o
 
 analyser/analyser.i: analyser/analyser.cpp.i
@@ -234,7 +234,7 @@ analyser/analyser.i: analyser/analyser.cpp.i
 
 # target to preprocess a source file
 analyser/analyser.cpp.i:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/analyser/analyser.cpp.i
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/analyser/analyser.cpp.i
 .PHONY : analyser/analyser.cpp.i
 
 analyser/analyser.s: analyser/analyser.cpp.s
@@ -243,7 +243,7 @@ analyser/analyser.s: analyser/analyser.cpp.s
 
 # target to generate assembly for a file
 analyser/analyser.cpp.s:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/analyser/analyser.cpp.s
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/analyser/analyser.cpp.s
 .PHONY : analyser/analyser.cpp.s
 
 main.o: main.cpp.o
@@ -252,7 +252,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/c0.dir/build.make CMakeFiles/c0.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/cc0.dir/build.make CMakeFiles/cc0.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -261,7 +261,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/c0.dir/build.make CMakeFiles/c0.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/cc0.dir/build.make CMakeFiles/cc0.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -270,7 +270,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/c0.dir/build.make CMakeFiles/c0.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/cc0.dir/build.make CMakeFiles/cc0.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 tests/test_analyser.o: tests/test_analyser.cpp.o
@@ -279,7 +279,7 @@ tests/test_analyser.o: tests/test_analyser.cpp.o
 
 # target to build an object file
 tests/test_analyser.cpp.o:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_analyser.cpp.o
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_analyser.cpp.o
 .PHONY : tests/test_analyser.cpp.o
 
 tests/test_analyser.i: tests/test_analyser.cpp.i
@@ -288,7 +288,7 @@ tests/test_analyser.i: tests/test_analyser.cpp.i
 
 # target to preprocess a source file
 tests/test_analyser.cpp.i:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_analyser.cpp.i
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_analyser.cpp.i
 .PHONY : tests/test_analyser.cpp.i
 
 tests/test_analyser.s: tests/test_analyser.cpp.s
@@ -297,7 +297,7 @@ tests/test_analyser.s: tests/test_analyser.cpp.s
 
 # target to generate assembly for a file
 tests/test_analyser.cpp.s:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_analyser.cpp.s
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_analyser.cpp.s
 .PHONY : tests/test_analyser.cpp.s
 
 tests/test_main.o: tests/test_main.cpp.o
@@ -306,7 +306,7 @@ tests/test_main.o: tests/test_main.cpp.o
 
 # target to build an object file
 tests/test_main.cpp.o:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_main.cpp.o
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_main.cpp.o
 .PHONY : tests/test_main.cpp.o
 
 tests/test_main.i: tests/test_main.cpp.i
@@ -315,7 +315,7 @@ tests/test_main.i: tests/test_main.cpp.i
 
 # target to preprocess a source file
 tests/test_main.cpp.i:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_main.cpp.i
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_main.cpp.i
 .PHONY : tests/test_main.cpp.i
 
 tests/test_main.s: tests/test_main.cpp.s
@@ -324,7 +324,7 @@ tests/test_main.s: tests/test_main.cpp.s
 
 # target to generate assembly for a file
 tests/test_main.cpp.s:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_main.cpp.s
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_main.cpp.s
 .PHONY : tests/test_main.cpp.s
 
 tests/test_tokenizer.o: tests/test_tokenizer.cpp.o
@@ -333,7 +333,7 @@ tests/test_tokenizer.o: tests/test_tokenizer.cpp.o
 
 # target to build an object file
 tests/test_tokenizer.cpp.o:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_tokenizer.cpp.o
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_tokenizer.cpp.o
 .PHONY : tests/test_tokenizer.cpp.o
 
 tests/test_tokenizer.i: tests/test_tokenizer.cpp.i
@@ -342,7 +342,7 @@ tests/test_tokenizer.i: tests/test_tokenizer.cpp.i
 
 # target to preprocess a source file
 tests/test_tokenizer.cpp.i:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_tokenizer.cpp.i
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_tokenizer.cpp.i
 .PHONY : tests/test_tokenizer.cpp.i
 
 tests/test_tokenizer.s: tests/test_tokenizer.cpp.s
@@ -351,7 +351,7 @@ tests/test_tokenizer.s: tests/test_tokenizer.cpp.s
 
 # target to generate assembly for a file
 tests/test_tokenizer.cpp.s:
-	$(MAKE) -f CMakeFiles/c0_test.dir/build.make CMakeFiles/c0_test.dir/tests/test_tokenizer.cpp.s
+	$(MAKE) -f CMakeFiles/cc0_test.dir/build.make CMakeFiles/cc0_test.dir/tests/test_tokenizer.cpp.s
 .PHONY : tests/test_tokenizer.cpp.s
 
 tokenizer/tokenizer.o: tokenizer/tokenizer.cpp.o
@@ -360,7 +360,7 @@ tokenizer/tokenizer.o: tokenizer/tokenizer.cpp.o
 
 # target to build an object file
 tokenizer/tokenizer.cpp.o:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/tokenizer/tokenizer.cpp.o
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/tokenizer/tokenizer.cpp.o
 .PHONY : tokenizer/tokenizer.cpp.o
 
 tokenizer/tokenizer.i: tokenizer/tokenizer.cpp.i
@@ -369,7 +369,7 @@ tokenizer/tokenizer.i: tokenizer/tokenizer.cpp.i
 
 # target to preprocess a source file
 tokenizer/tokenizer.cpp.i:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/tokenizer/tokenizer.cpp.i
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/tokenizer/tokenizer.cpp.i
 .PHONY : tokenizer/tokenizer.cpp.i
 
 tokenizer/tokenizer.s: tokenizer/tokenizer.cpp.s
@@ -378,7 +378,7 @@ tokenizer/tokenizer.s: tokenizer/tokenizer.cpp.s
 
 # target to generate assembly for a file
 tokenizer/tokenizer.cpp.s:
-	$(MAKE) -f CMakeFiles/c0_lib.dir/build.make CMakeFiles/c0_lib.dir/tokenizer/tokenizer.cpp.s
+	$(MAKE) -f CMakeFiles/cc0_lib.dir/build.make CMakeFiles/cc0_lib.dir/tokenizer/tokenizer.cpp.s
 .PHONY : tokenizer/tokenizer.cpp.s
 
 # Help Target
@@ -387,16 +387,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
-	@echo "... install"
 	@echo "... list_install_components"
-	@echo "... edit_cache"
 	@echo "... install/local"
 	@echo "... test"
 	@echo "... rebuild_cache"
-	@echo "... c0"
-	@echo "... c0_test"
-	@echo "... c0_lib"
+	@echo "... cc0_test"
+	@echo "... edit_cache"
+	@echo "... install/strip"
+	@echo "... install"
+	@echo "... cc0"
+	@echo "... cc0_lib"
 	@echo "... fmt"
 	@echo "... analyser/analyser.o"
 	@echo "... analyser/analyser.i"

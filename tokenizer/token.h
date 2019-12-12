@@ -12,6 +12,7 @@ namespace c0 {
 		NULL_TOKEN,
 		UNSIGNED_INTEGER,
 		IDENTIFIER,
+		//保留字
 		CONST,
 		VOID,
 		INT,
@@ -31,6 +32,8 @@ namespace c0 {
 		CONTINUE,
 		PRINT,
 		SCAN,
+        HEXADECIMAL,
+		//符号
 		PLUS_SIGN,
 		MINUS_SIGN,
 		MULTIPLICATION_SIGN,
@@ -42,7 +45,28 @@ namespace c0 {
 		RIGHT_BRACKET,
 		LEFT_BRACE,
 		RIGHT_BRACE,
-
+        SINGLE_QUOTATION,
+        DOUBLE_QUOTATION,
+        NOT_EQUAL_SIGN,
+        GREATER_SIGN,
+        LESS_SIGN,
+        GREATER_EQUAL_SIGN,
+        LESS_EQUAL_SIGN,
+        //字符与字符串
+        STRING_VALUE,
+        CHAR_VALUE,
+		//浮点数
+		//DOUBLE_VALUE,
+        /*
+        //转义字符
+        ESCAPE_t,
+        ESCAPE_n,
+        ESCAPE_x,
+        ESCAPE_r,
+        ESCAPE_escape,
+        ESCAPE_SINGLE_QUOTATION,
+        ESCAPE_DOUBLE_QUOTATION,
+         */
 	};
 
 	class Token final {

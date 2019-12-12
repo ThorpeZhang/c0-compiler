@@ -16,19 +16,7 @@ namespace c0 {
 		// 示例函数，示例如何调用子程序
 
 		// 'begin'
-		auto bg = nextToken();
-		if (!bg.has_value() || bg.value().GetType() != TokenType::BEGIN)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoBegin);
-
-		// <主过程>
-		auto err = analyseMain();
-		if (err.has_value())
-			return err;
-
-		// 'end'
-		auto ed = nextToken();
-		if (!ed.has_value() || ed.value().GetType() != TokenType::END)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoEnd);
+		
 		return {};
 	}
 

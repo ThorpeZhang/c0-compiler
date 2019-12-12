@@ -2,10 +2,10 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="c0" targetName="c0" />
-      <config projectName="c0" targetName="fmt" />
-      <config projectName="c0" targetName="c0_lib" />
-      <config projectName="c0" targetName="c0_test" />
+      <config projectName="cc0" targetName="cc0_lib" />
+      <config projectName="cc0" targetName="cc0" />
+      <config projectName="cc0" targetName="fmt" />
+      <config projectName="cc0" targetName="cc0_test" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -15,16 +15,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b6a161f0-6329-45c8-bf2e-027c126b3f95" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyser/analyser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/analyser/analyser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyser/analyser.h" beforeDir="false" afterPath="$PROJECT_DIR$/analyser/analyser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/error/error.h" beforeDir="false" afterPath="$PROJECT_DIR$/error/error.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instruction/instruction.h" beforeDir="false" afterPath="$PROJECT_DIR$/instruction/instruction.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/simple_vm.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/tests/simple_vm.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CTestTestfile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CTestTestfile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fmts.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/fmts.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/token.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.h" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tokenizer/utils.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/utils.hpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,6 +46,7 @@
     <option name="directoryName" value="srPbFvwo" />
   </component>
   <component name="ProjectId" id="1UF7pXranqG1EVSuCjVSRrW7F9q" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -66,31 +70,31 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="CMake Application.c0">
-    <configuration name="c0" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="c0" TARGET_NAME="c0" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="c0" RUN_TARGET_NAME="c0">
+  <component name="RunManager" selected="CMake Application.cc0">
+    <configuration name="cc0" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cc0" TARGET_NAME="cc0" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cc0" RUN_TARGET_NAME="cc0">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="c0_lib" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="c0" TARGET_NAME="c0_lib" CONFIG_NAME="Debug">
+    <configuration name="cc0_lib" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cc0" TARGET_NAME="cc0_lib" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="c0_test" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="c0" TARGET_NAME="c0_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="c0" RUN_TARGET_NAME="c0_test">
+    <configuration name="cc0_test" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cc0" TARGET_NAME="cc0_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cc0" RUN_TARGET_NAME="cc0_test">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="fmt" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="c0" TARGET_NAME="fmt" CONFIG_NAME="Debug">
+    <configuration name="fmt" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cc0" TARGET_NAME="fmt" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake Application.c0" />
-      <item itemvalue="CMake Application.c0_lib" />
-      <item itemvalue="CMake Application.c0_test" />
+      <item itemvalue="CMake Application.cc0" />
+      <item itemvalue="CMake Application.cc0_lib" />
+      <item itemvalue="CMake Application.cc0_test" />
       <item itemvalue="CMake Application.fmt" />
     </list>
   </component>
@@ -104,7 +108,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1574940672181</updated>
-      <workItem from="1574940673335" duration="2061000" />
+      <workItem from="1574940673335" duration="12072000" />
+      <workItem from="1575543200257" duration="1033000" />
+      <workItem from="1575943635361" duration="5468000" />
     </task>
     <servers />
   </component>
@@ -116,7 +122,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

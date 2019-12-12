@@ -22,6 +22,7 @@ namespace c0 {
 		enum DFAState {
 			INITIAL_STATE,
 			UNSIGNED_INTEGER_STATE,
+            HEXADECIMAL_STATE,
 			PLUS_SIGN_STATE,
 			MINUS_SIGN_STATE,
 			DIVISION_SIGN_STATE,
@@ -29,8 +30,17 @@ namespace c0 {
 			IDENTIFIER_STATE,
 			EQUAL_SIGN_STATE,
 			SEMICOLON_STATE,
-			LEFTBRACKET_STATE,
-			RIGHTBRACKET_STATE
+			LEFT_BRACKET_STATE,
+			RIGHT_BRACKET_STATE,
+			LEFT_BRACE_STATE,
+			RIGHT_BRACE_STATE,
+			NOT_EQUAL_SIGN_STATE,
+            GREATER_SIGN_STATE,
+            LESS_SIGN_STATE,
+            CHAR_VALUE_STATE,
+            STRING_VALUE_STATE,
+			//DOUBLE_VALUE_STATE,
+			//EXPONENT_STATE,
 		};
 	public:
 		Tokenizer(std::istream& ifs)
@@ -77,8 +87,11 @@ namespace c0 {
 		std::pair<uint64_t, uint64_t> currentPos();
 		std::pair<uint64_t, uint64_t> previousPos();
 		std::optional<char> nextChar();
+        std::pair<std::optional<Token>, std::optional<CompilationError>> analyseIdentifier(const std::pair<int64_t, int64_t>&, const std::string&);
+        std::pair<std::optional<Token>, std::optional<CompilationError>> analyseHexadecimal(const std::pair<int64_t, int64_t>&, const std::string &);
 		bool isEOF();
 		void unreadLast();
+		bool isAccepted(const char&);
 	private:
 		std::istream& _rdr;
 		// 如果没有初始化，那么就 readAll

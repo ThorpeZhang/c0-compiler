@@ -11,7 +11,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeCXXInformation.cmake"
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake"
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeCommonLanguageInclude.cmake"
-  "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeConfigurableFile.in"
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeExtraGeneratorDetermineCompilerMacrosAndIncludeDirs.cmake"
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeFindCodeBlocks.cmake"
   "/Users/zhangtaotao/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/192.7142.39/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/CMakeGenericSystem.cmake"
@@ -64,8 +63,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/c0.dir/DependInfo.cmake"
-  "CMakeFiles/c0_test.dir/DependInfo.cmake"
-  "CMakeFiles/c0_lib.dir/DependInfo.cmake"
+  "CMakeFiles/cc0_test.dir/DependInfo.cmake"
+  "CMakeFiles/cc0.dir/DependInfo.cmake"
+  "CMakeFiles/cc0_lib.dir/DependInfo.cmake"
   "3rd_party/fmt/CMakeFiles/fmt.dir/DependInfo.cmake"
   )

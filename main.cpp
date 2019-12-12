@@ -8,8 +8,8 @@
 #include <iostream>
 #include <fstream>
 
-std::vector<miniplc0::Token> _tokenize(std::istream& input) {
-	miniplc0::Tokenizer tkz(input);
+std::vector<c0::Token> _tokenize(std::istream& input) {
+	c0::Tokenizer tkz(input);
 	auto p = tkz.AllTokens();
 	if (p.second.has_value()) {
 		fmt::print(stderr, "Tokenization error: {}\n", p.second.value());
@@ -27,7 +27,7 @@ void Tokenize(std::istream& input, std::ostream& output) {
 
 void Analyse(std::istream& input, std::ostream& output){
 	auto tks = _tokenize(input);
-	miniplc0::Analyser analyser(tks);
+	c0::Analyser analyser(tks);
 	auto p = analyser.Analyse();
 	if (p.second.has_value()) {
 		fmt::print(stderr, "Syntactic analysis error: {}\n", p.second.value());
