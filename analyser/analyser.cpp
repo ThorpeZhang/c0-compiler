@@ -255,6 +255,12 @@ namespace c0 {
                 return {};
             }
 
+            // 保存指令的切换栈，便于强制转换次栈顶的类型
+            //// 一定要把指令迁移到当前的栈中！
+            //// 一定要把栈切换回去！
+            _current_func++;
+
+            //// 以下表达式的分析产生的指令将在新的栈中保存
             err = analyseMultiExpression(typeTest);
             if(err.has_value())
                 return err;
@@ -268,7 +274,12 @@ namespace c0 {
             if(myType == TokenType::INT) {
                 if(typeTest == TokenType::DOUBLE) {
                     myType = TokenType ::DOUBLE;
-                    ////如何转换次栈顶的类型？
+                    //// 转换次栈顶的类型
+                    _instructions[_current_func - 1].emplace_back(Operation::IADD);
+                    if(mul_flag == 1)
+                        _instructions[_current_func].emplace_back(Operation::DADD);
+                    else
+                        _instructions[_current_func].emplace_back(Operation::DSUB);
                 }
                 else if(typeTest == TokenType::INT) {
                     myType = TokenType ::INT;
@@ -292,7 +303,18 @@ namespace c0 {
             }
             else
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+
+            //// 迁移指令，清空临时栈，把栈切换回来！
+            auto itr = _instructions[_current_func].begin();
+            while(itr != _instructions[_current_func].end()) {
+                _instructions[_current_func - 1].emplace_back(*itr);
+                itr++;
+            }
+
+            _instructions[_current_func].clear();
+            _current_func--;
         }
+        return {};
 	}
 
 	// <multiplicative-expression> ::=
