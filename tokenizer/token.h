@@ -52,6 +52,7 @@ namespace c0 {
         LESS_SIGN,
         GREATER_EQUAL_SIGN,
         LESS_EQUAL_SIGN,
+        COMMA,
         //字符与字符串
         STRING_VALUE,
         CHAR_VALUE,

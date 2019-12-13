@@ -101,6 +101,9 @@ namespace c0 {
                             case '(':
                                 current_state = DFAState::LEFT_BRACKET_STATE;
                                 break;
+                            case ',':
+                                current_state = DFAState ::COMMA_STATE;
+                                break;
                             case ')':
                                 current_state = DFAState::RIGHT_BRACKET_STATE;
                                 break;
@@ -382,6 +385,11 @@ namespace c0 {
                 case LEFT_BRACE_STATE: {
                     unreadLast();
                     return std::make_pair(std::make_optional<Token>(TokenType::LEFT_BRACE, '{', pos, currentPos()), std::optional<CompilationError>());
+                }
+
+                case COMMA_STATE: {
+                    unreadLast();
+                    return std::make_pair(std::make_optional<Token>(TokenType::COMMA, ',', pos, currentPos()), std::optional<CompilationError>());
                 }
 
                 case RIGHT_BRACE_STATE: {

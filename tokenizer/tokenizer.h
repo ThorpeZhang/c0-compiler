@@ -41,6 +41,7 @@ namespace c0 {
             STRING_VALUE_STATE,
 			DOUBLE_VALUE_STATE,
 			EXPONENT_STATE,
+			COMMA_STATE,
 		};
 	public:
 		Tokenizer(std::istream& ifs)
