@@ -33,14 +33,42 @@ void Analyse(std::istream& input, std::ostream& output){
 		fmt::print(stderr, "Syntactic analysis error: {}\n", p.second.value());
 		exit(2);
 	}
+
+	//// 输出汇编指令
+	//// 输出常量表
+    output << fmt::format(".constants:\n");
+	auto _const = analyser.getConst();
+	for(auto & itr : _const)
+        output << fmt::format("{} {} {}\n", itr.first, std::get<0>(itr.second), std::get<1>(itr.second));
+
+	//// 输出开始指令
+    output << fmt::format(".start:\n");
+    auto _start = analyser.getStartCode();
+    int32_t _i = 0;
+    for(auto & itr : _start)
+        output << fmt::format("{}\t{}\n", _i++, itr);
+
+    //// 输出函数表
+    output << fmt::format(".functions:\n");
+    auto _func = analyser.getFuncs();
+    for(auto & itr : _func) {
+        auto& t = itr.second;
+        output << fmt::format("{} {} {} {}\n", std::get<0>(t), std::get<1>(t), std::get<2>(t), std::get<3>(t));
+    }
+
+    //// 输出各函数代码
 	auto v = p.first;
-	for (auto& it : v)
-		output << fmt::format("{}\n", it);
+    _i = 0;
+	for (auto& it : v) {
+        output << fmt::format(".F{}:\n", it.first);
+        for(auto & itr : it.second)
+            output << fmt::format("{}\t{}\n", _i++, itr);
+	}
 	return;
 }
 
 int main(int argc, char** argv) {
-	argparse::ArgumentParser program("miniplc0");
+	argparse::ArgumentParser program("c0");
 	program.add_argument("input")
 		.help("speicify the file to be compiled.");
 	program.add_argument("-t")
