@@ -22,14 +22,20 @@ namespace c0 {
 	public:
 		Analyser(std::vector<Token> v)
 			: _tokens(std::move(v)), _offset(0), _instructions({}), _start_code({}), _current_pos(0, 0), _current_func(0),
-			_uninitialized_vars({}), _vars({}), _consts({}), _nextTokenIndex({}), _current_level(0),
+			_uninitialized_vars({}), _vars({}), _consts({}), _vars_type({}), _nextTokenIndex({0}), _current_level(-1),
 			_funcs({}), _funcs_index_name({}), _nextFunc(0), _consts_offset(0), _runtime_consts({}), _runtime_funcs({}){}
 		Analyser(Analyser&&) = delete;
 		Analyser(const Analyser&) = delete;
 		Analyser& operator=(Analyser) = delete;
 
-		// 唯一接口
-		std::pair<std::vector<std::vector<Instruction>>, std::optional<CompilationError>> Analyse();
+		// 接口
+		std::pair<std::map<int32_t , std::vector<Instruction>>, std::optional<CompilationError>> Analyse();
+
+        std::vector<Instruction> getStartCode() {return _start_code;}
+
+        std::map<int32_t, std::tuple<std::string, std::string> > getConst() {return _runtime_consts;}
+
+        std::map<int32_t, std::tuple<int32_t, int32_t, int32_t, int32_t> > getFuncs(){return _runtime_funcs;}
 	private:
 		// 所有的递归子程序
 
@@ -78,34 +84,36 @@ namespace c0 {
         // <赋值语句>
         std::optional<CompilationError> analyseAssignmentStatement();
 
-        // <condition>
-        std::optional<CompilationError> analyseCondition();
+
+        std::optional<CompilationError> analyseCompoundStatement();
+
+        std::optional<CompilationError> analyseFunctionCall(TokenType&);
+
+        std::optional<CompilationError> analyseStatement();
         // <condition-statement>
         std::optional<CompilationError> analyseConditionStatement();
         // <labeled-statement>
-        std::optional<CompilationError> analyseLabeledStatement();
+        ////std::optional<CompilationError> analyseLabeledStatement();
 
         // <loop-statement>
-        std::optional<CompilationError> analyseLoopStatement();
+        ////std::optional<CompilationError> analyseLoopStatement();
         // for
-        std::optional<CompilationError> analyseForStatement();
+        ////std::optional<CompilationError> analyseForStatement();
         // while
-        std::optional<CompilationError> analyseWhileStatement();
+        ////std::optional<CompilationError> analyseWhileStatement();
         // do...while
-        std::optional<CompilationError> analyseDoWhileStatement();
+        ////std::optional<CompilationError> analyseDoWhileStatement();
         // <for-init-statement>
-        std::optional<CompilationError> analyseForInitStatement();
+        ////std::optional<CompilationError> analyseForInitStatement();
 
         // <jump-statement>
-        std::optional<CompilationError> analyseJumpStatement();
+        ////std::optional<CompilationError> analyseJumpStatement();
 
         //IO语句
         // <scan-statement>
         std::optional<CompilationError> analyseScanStatement();
         // <print-statement>
         std::optional<CompilationError> analysePrintStatement();
-        // <printable-list>
-        std::optional<CompilationError> analysePrintableList();
         // <printable>
         std::optional<CompilationError> analysePrintable();
 
@@ -127,8 +135,8 @@ namespace c0 {
 		// 是否在当前层级内被声明过
 		// 在声明新变量的时候调用
 		bool isDeclared(const std::string&);
-		// 是否是未初始化的变量
-		bool isUninitializedVariable(const std::string&);
+		// 是否是可以使用的变量
+		bool isUseful(const std::string&);
 		// 是否是已初始化的变量
 		bool isInitializedVariable(const std::string&);
 		// 是否是常量
@@ -155,7 +163,7 @@ namespace c0 {
 	private:
 		std::vector<Token> _tokens;
 		std::size_t _offset;
-		std::vector<std::vector<Instruction> > _instructions;
+        std::map<int32_t, std::vector<Instruction> > _instructions;
 		std::vector<Instruction> _start_code;
 		std::pair<uint64_t, uint64_t> _current_pos;
 
@@ -176,13 +184,11 @@ namespace c0 {
 
 		////c0的符号表管理
 		//用vector的下标来代表层级
-		std::vector<std::map<std::string, int32_t> > _uninitialized_vars;
-		std::vector<std::map<std::string, int32_t> > _vars;
-		std::vector<std::map<std::string, int32_t> > _consts;
+		std::map<int32_t, std::map<std::string, int32_t> > _uninitialized_vars;
+		std::map<int32_t, std::map<std::string, int32_t> > _vars;
+		std::map<int32_t, std::map<std::string, int32_t> > _consts;
         // 类型管理
-        std::vector<std::map<std::string, TokenType> > _uninitialized_vars_type;
-        std::vector<std::map<std::string, TokenType> > _vars_type;
-        std::vector<std::map<std::string, TokenType> > _consts_type;
+        std::map<int32_t, std::map<std::string, TokenType> > _vars_type;
 		std::vector<int> _nextTokenIndex;
 
         //当前的层级
@@ -191,13 +197,13 @@ namespace c0 {
 
 		//函数表
 		// 返回的类型、参数类型列表
-		std::vector<std::pair<TokenType, std::vector<TokenType> > > _funcs;
-		std::vector<std::string> _funcs_index_name;
+		std::map<int32_t, std::pair<TokenType, std::vector<TokenType> > > _funcs;
+        std::map<int32_t, std::string> _funcs_index_name;
 		int32_t _nextFunc;
 
 		////运行时的表构建
 		int32_t _consts_offset;
-		std::map<int32_t, Token> _runtime_consts;
+        std::map<int32_t, std::tuple<std::string, std::string> > _runtime_consts;
 		//函数在函数表中的下标、函数名在常量表中的下标、参数占空间的大小、函数层级
 		std::map<int32_t, std::tuple<int32_t, int32_t, int32_t, int32_t> > _runtime_funcs;
 	};
