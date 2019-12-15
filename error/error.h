@@ -23,9 +23,8 @@ namespace c0 {
 		ErrEOF,
 		ErrInvalidInput,
 		ErrInvalidIdentifier,
+		ErrInvalidVariableType,
 		ErrIntegerOverflow, // int32_t overflow.
-		ErrNoBegin,
-		ErrNoEnd,
 		ErrNeedIdentifier,
 		ErrConstantNeedValue,
 		ErrNoSemicolon,
@@ -36,7 +35,13 @@ namespace c0 {
 		ErrDuplicateDeclaration,
 		ErrNotInitialized,
 		ErrInvalidAssignment,
-		ErrInvalidPrint
+		ErrInvalidPrint,
+		ErrInvalidFunctionParamType,
+        ErrInvalidFunctionParamCount,
+        ErrInvalidType,
+        ErrNoLeftBrace,
+        ErrNoRightBrace,
+        ErrStatementSequence,
 	};
 
 	class CompilationError final{
