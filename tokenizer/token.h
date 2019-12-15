@@ -58,16 +58,6 @@ namespace c0 {
         CHAR_VALUE,
 		//浮点数
 		DOUBLE_VALUE,
-        /*
-        //转义字符
-        ESCAPE_t,
-        ESCAPE_n,
-        ESCAPE_x,
-        ESCAPE_r,
-        ESCAPE_escape,
-        ESCAPE_SINGLE_QUOTATION,
-        ESCAPE_DOUBLE_QUOTATION,
-         */
 	};
 
 	class Token final {
@@ -92,6 +82,10 @@ namespace c0 {
 				&& GetValueString() == rhs.GetValueString() 
 				&& _start_pos == rhs._start_pos 
 				&& _end_pos == rhs._end_pos; 
+		}
+
+		bool operator<(const Token& p) const {
+		    return GetValueString() < p.GetValueString();
 		}
 
 		TokenType GetType() const { return _type; };
