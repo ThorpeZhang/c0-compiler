@@ -23,7 +23,8 @@ namespace c0 {
 		Analyser(std::vector<Token> v)
 			: _tokens(std::move(v)), _offset(0), _instructions({}), _start_code({}), _current_pos(0, 0), _current_func(0),
 			_uninitialized_vars({}), _vars({}), _consts({}), _vars_type({}), _nextTokenIndex({0}), _current_level(-1),
-			_funcs({}), _funcs_index_name({}), _nextFunc(0), _consts_offset(0), _runtime_consts({}), _runtime_funcs({}){}
+			_funcs({}), _funcs_index_name({}), _nextFunc(0), _consts_offset(0), _runtime_consts({}), _runtime_consts_index({}), _runtime_funcs({}),
+			_current_loop(-1), continues({}), breaks({}){}
 		Analyser(Analyser&&) = delete;
 		Analyser(const Analyser&) = delete;
 		Analyser& operator=(Analyser) = delete;
@@ -89,9 +90,21 @@ namespace c0 {
 
         std::optional<CompilationError> analyseFunctionCall(TokenType&);
 
+        std::optional<CompilationError> analyseRetStatement();
+
         std::optional<CompilationError> analyseStatement();
+
+        std::optional<CompilationError> analyseCondition(int32_t&);
         // <condition-statement>
-        std::optional<CompilationError> analyseConditionStatement();
+        std::optional<CompilationError> analyseIfStatement();
+
+        std::optional<CompilationError> analyseBreakStatement();
+        std::optional<CompilationError> analyseContinueStatement();
+
+        std::optional<CompilationError> analyseWhileStatement();
+        std::optional<CompilationError> analyseDoWhileStatement();
+        std::optional<CompilationError> analyseForStatement();
+        std::optional<CompilationError> analyseSwitchStatement();
         // <labeled-statement>
         ////std::optional<CompilationError> analyseLabeledStatement();
 
@@ -204,7 +217,15 @@ namespace c0 {
 		////运行时的表构建
 		int32_t _consts_offset;
         std::map<int32_t, std::tuple<std::string, std::string> > _runtime_consts;
+        std::map<std::string, int32_t> _runtime_consts_index;
 		//函数在函数表中的下标、函数名在常量表中的下标、参数占空间的大小、函数层级
 		std::map<int32_t, std::tuple<int32_t, int32_t, int32_t, int32_t> > _runtime_funcs;
+
+		////记录当前是否处于循环体的分析中
+		//当前循环层数
+		int32_t _current_loop;
+		//记录当前循环体中的continue和break在当前指令栈中的位置下标，以便于回溯修改指令中的参数
+		std::map<int32_t, std::vector<int32_t>> continues;
+        std::map<int32_t, std::vector<int32_t>> breaks;
 	};
 }

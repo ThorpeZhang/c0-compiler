@@ -1,6 +1,7 @@
 #include "analyser.h"
 
 #include <climits>
+#include <sstream>
 
 int count = 0;
 
@@ -185,9 +186,13 @@ namespace c0 {
             unreadToken();
             err = analysePrintStatement();
         }
-        else if(type == SCAN) {
+        else if(type == TokenType::SCAN) {
             unreadToken();
             err = analyseScanStatement();
+        }
+        else if(type == TokenType::RETURN) {
+            unreadToken();
+            err = analyseRetStatement();
         }
         else if(type == TokenType::IDENTIFIER) {
             next = nextToken();
@@ -198,8 +203,17 @@ namespace c0 {
             unreadToken();
             type = next.value().GetType();
             TokenType typeTest;
-            if(type == TokenType::LEFT_BRACKET)
+            if(type == TokenType::LEFT_BRACKET) {
                 err = analyseFunctionCall(typeTest);
+                if(err.has_value())
+                    return err;
+
+                if(typeTest == TokenType::DOUBLE)
+                    _instructions[_current_func].emplace_back(Operation::POP2);
+                else if(typeTest != TokenType::VOID)
+                    _instructions[_current_func].emplace_back(Operation::POP);
+
+            }
             else if(type == TokenType::ASSIGN_SIGN)
                 err = analyseAssignmentStatement();
             else
@@ -208,6 +222,26 @@ namespace c0 {
             next = nextToken();
             if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+
+            if(err.has_value())
+                return err;
+            return {};
+        }
+        else if(type == TokenType::IF) {
+            unreadToken();
+            err = analyseIfStatement();
+        }
+        else if(type == TokenType::BREAK)
+            err = analyseBreakStatement();
+        else if(type == TokenType::CONTINUE)
+            err = analyseContinueStatement();
+        else if(type == TokenType::WHILE) {
+            unreadToken();
+            err = analyseWhileStatement();
+        }
+        else if(type == TokenType::DO) {
+            unreadToken();
+            err = analyseDoWhileStatement();
         }
         else if(type == TokenType::SEMICOLON)
             return {};
@@ -246,9 +280,378 @@ namespace c0 {
     // <condition-statement> ::=
     //     'if' '(' <condition> ')' <statement> ['else' <statement>]
     //    |'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
-    std::optional<CompilationError> Analyser::analyseConditionStatement() {
+    // je：  0   value是0
+    // jne： 1   value不是0
+    // jl：  2   value是负数
+    // jge： 3   value不是负数
+    // jg：  4   value是正数
+    // jle： 5   value不是正数
+    // Condition返回的是不满足条件的_option
+    std::optional<CompilationError> Analyser::analyseCondition(int32_t & _option) {
+        auto next = nextToken();
+        if(!next.has_value())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+        unreadToken();
 
+        TokenType typeTest, type;
+        auto err = analyseExpression(type);
+        if(err.has_value())
+            return err;
+        if(type == TokenType::VOID)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+        _option = 0;
+
+        next = nextToken();
+        if(!next.has_value())
+            return {};
+
+        switch(next.value().GetType()) {
+            case TokenType ::LESS_SIGN :
+                _option = 3;
+                break;
+            case TokenType ::LESS_EQUAL_SIGN:
+                _option = 4;
+                break;
+            case TokenType ::GREATER_SIGN:
+                _option = 5;
+                break;
+            case TokenType ::GREATER_EQUAL_SIGN:
+                _option = 2;
+                break;
+            case TokenType ::EQUAL_SIGN:
+                _option = 1;
+                break;
+            case TokenType ::NOT_EQUAL_SIGN:
+                _option = 0;
+                break;
+            default:
+                unreadToken();
+                return {};
+        }
+
+        err = analyseExpression(typeTest);
+        if(err.has_value())
+            return err;
+        if(typeTest == TokenType::VOID)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+
+        if(type == TokenType::DOUBLE) {
+            if(typeTest == TokenType::INT || typeTest == TokenType::CHAR)
+                _instructions[_current_func].emplace_back(Operation::I2D);
+            _instructions[_current_func].emplace_back(Operation::DCMP);
+        }
+        else if(type == TokenType::INT || type == TokenType::CHAR) {
+            if(typeTest == TokenType::DOUBLE)
+                _instructions[_current_func].emplace_back(Operation::D2I);
+            _instructions[_current_func].emplace_back(Operation::ICMP);
+
+        }
+
+        return {};
 	}
+    std::optional<CompilationError> Analyser::analyseIfStatement() {
+	    ////进入此函数之前已经读到if
+	    auto next = nextToken();
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+	    }
+
+	    int32_t _option;
+	    auto err = analyseCondition(_option);
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
+
+        ////如何实现跳转？
+        Operation _op;
+        switch(_option) {
+            case 0:
+              _op = Operation ::JE;
+              break;
+            case 1:
+                _op = Operation ::JNE;
+                break;
+            case 2:
+                _op = Operation ::JL;
+                break;
+            case 3:
+                _op = Operation ::JGE;
+                break;
+            case 4:
+                _op = Operation ::JG;
+                break;
+            case 5:
+                _op = Operation ::JLE;
+                break;
+            default:
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+        }
+
+        //  不满足条件，跳转到if后面的句子的末尾，如果有，else，则跳转到else的开头
+        int32_t _jmp = _instructions[_current_func].size();
+        _instructions[_current_func].emplace_back(_op);
+
+        err = analyseStatement();
+        if(err.has_value()){
+            return err;
+        }
+
+        _instructions[_current_func][_jmp].set_X(_instructions[_current_func].size());
+        _instructions[_current_func].emplace_back(Operation::NOP);
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::ELSE) {
+            unreadToken();
+            return {};
+        }
+        // 跳转到else句子的末尾
+        _instructions[_current_func].pop_back();
+        int32_t _jmp2 = _instructions[_current_func].size();
+        _instructions[_current_func].emplace_back(Operation::JMP);
+        //跳转到else开头
+        _instructions[_current_func][_jmp].set_X(_instructions[_current_func].size());
+
+        err = analyseStatement();
+        if(err.has_value()){
+            return err;
+        }
+
+        if(_instructions[_current_func].back().GetOperation() == Operation::NOP)
+            _instructions[_current_func][_jmp2].set_X(_instructions[_current_func].size() - 1);
+        else {
+            _instructions[_current_func][_jmp2].set_X(_instructions[_current_func].size());
+            _instructions[_current_func].emplace_back(Operation::NOP);
+        }
+
+
+        return {};
+	}
+
+	// 'while' '(' <condition> ')' <statement>
+	// <jump-statement> ::=
+    //     'break' ';'
+    //    |'continue' ';'
+    std::optional<CompilationError> Analyser::analyseBreakStatement() {
+	    //// 进入此函数之前已经读到break，此处不再把读走的break放回来
+	    if(_current_loop < 0)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrBreak);
+
+	    auto next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+	    }
+
+	    breaks[_current_loop].emplace_back(_instructions[_current_func].size());
+	    _instructions[_current_func].emplace_back(Operation::JMP);
+
+
+	    return {};
+	}
+    std::optional<CompilationError> Analyser::analyseContinueStatement() {
+        //// 进入此函数之前已经读到break，此处不再把读走的continue放回来
+        if(_current_loop < 0)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrContinue);
+
+        auto next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+        }
+
+        continues[_current_loop].emplace_back(_instructions[_current_func].size());
+        _instructions[_current_func].emplace_back(Operation::JMP);
+
+
+        return {};
+    }
+    std::optional<CompilationError> Analyser::analyseWhileStatement() {
+	    //// 进入此函数前已经读到了while
+	    auto next = nextToken();
+
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+	    }
+
+	    ////为分析循环体作准备
+	    _current_loop++;
+	    int32_t beginOfWhile = _instructions[_current_func].size();
+
+	    int32_t _option;
+	    auto err = analyseCondition(_option);
+	    if(err.has_value())
+	        return err;
+
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
+
+
+        Operation _op;
+        switch(_option) {
+            case 0:
+                _op = Operation ::JE;
+                break;
+            case 1:
+                _op = Operation ::JNE;
+                break;
+            case 2:
+                _op = Operation ::JL;
+                break;
+            case 3:
+                _op = Operation ::JGE;
+                break;
+            case 4:
+                _op = Operation ::JG;
+                break;
+            case 5:
+                _op = Operation ::JLE;
+                break;
+            default:
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+        }
+
+        int32_t _jmp =_instructions[_current_func].size();
+        _instructions[_current_func].emplace_back(_op);
+
+        err = analyseStatement();
+        if(err.has_value())
+            return err;
+
+        ////补全continue的参数
+        int32_t continueOfWhile = _instructions[_current_func].size();
+        auto itr = continues[_current_loop].begin();
+        while(itr != continues[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(continueOfWhile);
+            itr++;
+        }
+        continues[_current_loop].clear();
+        continues.erase(_current_loop);
+
+        _instructions[_current_func].emplace_back(Operation::JMP, beginOfWhile);
+
+        ////补全break的参数
+        int32_t breakOfWhile = _instructions[_current_func].size();
+        itr = breaks[_current_loop].begin();
+        while(itr != breaks[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(breakOfWhile);
+            itr++;
+        }
+        breaks[_current_loop].clear();
+        breaks.erase(_current_loop);
+
+        _instructions[_current_func][_jmp].set_X(breakOfWhile);
+
+        _instructions[_current_func].emplace_back(Operation::NOP);
+
+        _current_loop--;
+        return {};
+	}
+
+	// 'do' <statement> 'while' '(' <condition> ')' ';'
+    std::optional<CompilationError> Analyser::analyseDoWhileStatement() {
+	    //// 进入此函数前已经读到了do
+	    auto next = nextToken();
+
+	    _current_loop++;
+	    int32_t beginOfDoWhile = _instructions[_current_func].size();
+
+	    auto err = analyseStatement();
+	    if(err.has_value())
+	        return err;
+
+        ////补全continue的参数
+        int32_t continueOfDoWhile = _instructions[_current_func].size();
+        auto itr = continues[_current_loop].begin();
+        while(itr != continues[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(continueOfDoWhile);
+            itr++;
+        }
+        continues[_current_loop].clear();
+        continues.erase(_current_loop);
+
+        _instructions[_current_func].emplace_back(Operation::NOP);
+
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::WHILE) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+	    }
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+        }
+
+	    int32_t _option;
+	    err = analyseCondition(_option);
+	    if(err.has_value())
+	        return err;
+	    // je：  0   value是0
+        // jne： 1   value不是0
+        // jl：  2   value是负数
+        // jge： 3   value不是负数
+        // jg：  4   value是正数
+        // jle： 5   value不是正数
+        // Condition返回的是不满足条件的_option
+        // 但是此处期望满足条件的_option
+        Operation _op;
+        switch(_option) {
+            case 0:
+                _op = Operation ::JNE;
+                break;
+            case 1:
+                _op = Operation ::JE;
+                break;
+            case 2:
+                _op = Operation ::JGE;
+                break;
+            case 3:
+                _op = Operation ::JL;
+                break;
+            case 4:
+                _op = Operation ::JLE;
+                break;
+            case 5:
+                _op = Operation ::JG;
+                break;
+            default:
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
+        }
+
+        _instructions[_current_func].emplace_back(_op, beginOfDoWhile);
+
+        ////补全break的参数
+        int32_t breakOfWhile = _instructions[_current_func].size();
+        itr = breaks[_current_loop].begin();
+        while(itr != breaks[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(breakOfWhile);
+            itr++;
+        }
+        breaks[_current_loop].clear();
+        breaks.erase(_current_loop);
+
+        _instructions[_current_func].emplace_back(Operation::NOP);
+
+	    _current_loop--;
+	    return {};
+	}
+
+	// 'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
+	// <for-init-statement> ::=
+    //    [<assignment-expression>{','<assignment-expression>}]';'
+    // <for-update-expression> ::=
+    //    (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
+
 
 	// <print-statement> ::=
     //    'print' '(' [<printable-list>] ')' ';'
@@ -284,6 +687,8 @@ namespace c0 {
         if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 
+
+        _instructions[_current_func].emplace_back(Operation::PRINTL);
         return {};
 	}
 
@@ -313,11 +718,15 @@ namespace c0 {
 
 	        if(typeTest == TokenType::DOUBLE)
                 _instructions[_current_func].emplace_back(Operation::DPRINT);
-	        else if(typeTest == TokenType::INT || typeTest == TokenType::CHAR)
+            else if(typeTest == TokenType::CHAR)
+                _instructions[_current_func].emplace_back(Operation::CPRINT);
+	        else if(typeTest == TokenType::INT)
                 _instructions[_current_func].emplace_back(Operation::IPRINT);
             else if(typeTest == TokenType::VOID)
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidPrint);
 	    }
+        _instructions[_current_func].emplace_back(Operation::BIPUSH, ' ');
+        _instructions[_current_func].emplace_back(Operation::CPRINT);
 
 	    return {};
 	}
@@ -368,6 +777,19 @@ namespace c0 {
         next = nextToken();
         if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+
+        if(!isInitializedVariable(tk.GetValueString())) {
+            //std::cout<<_current_level - index.first<<"\n";
+            int32_t level = _current_level;
+            while(level >= 0) {
+                if(_uninitialized_vars[level].find(tk.GetValueString()) != _uninitialized_vars[level].end()) {
+                    _vars[level][tk.GetValueString()] = _uninitialized_vars[level][tk.GetValueString()];
+                    _uninitialized_vars[level].erase(tk.GetValueString());
+                    break;
+                }
+                level --;
+            }
+        }
 
         return {};
 
@@ -471,12 +893,18 @@ namespace c0 {
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
             // '='
             if(next.value().GetType() == TokenType::ASSIGN_SIGN) {
-                if(type == TokenType::DOUBLE)
-                    _instructions[_current_func].emplace_back(Operation::IPUSH, 2);
-                else
-                    _instructions[_current_func].emplace_back(Operation::IPUSH, 1);
 
-                _instructions[_current_func].emplace_back(Operation::NEW);
+                if(type == TokenType::DOUBLE)
+                    _instructions[_current_func].emplace_back(Operation::SNEW, 2);
+                else
+                    _instructions[_current_func].emplace_back(Operation::SNEW, 1);
+
+
+
+                addVariable(identifier, type);
+                auto index = getIndex(identifier.GetValueString());
+
+                _instructions[_current_func].emplace_back(Operation::LOADA, index.first, index.second);
 
                 //// 需要在此处调用表达式分析子程序
                 TokenType typeTest;
@@ -509,7 +937,7 @@ namespace c0 {
                 else
                     _instructions[_current_func].emplace_back(Operation::ISTORE);
 
-                addVariable(identifier, type);
+
 
                 next = nextToken();
                 if(!next.has_value())
@@ -527,10 +955,19 @@ namespace c0 {
             }
             else if(next.value().GetType() == TokenType::COMMA || next.value().GetType() == TokenType::SEMICOLON) {
                 addUninitializedVariable(identifier, type);
-                if(type == TokenType::INT || type == TokenType::CHAR)
+                //auto index = getIndex(identifier.GetValueString());
+                if(type == TokenType::INT || type == TokenType::CHAR) {
                     _instructions[_current_func].emplace_back(Operation::SNEW, 1);
-                else if(type == TokenType::DOUBLE)
-                    _instructions[_current_func].emplace_back(Operation::SNEW, 1);
+                    //_instructions[_current_func].emplace_back(Operation::LOADA, index.first, index.second);
+                    //_instructions[_current_func].emplace_back(Operation::IPUSH, 0);
+                    //_instructions[_current_func].emplace_back(Operation::ISTORE);
+                }
+
+                    //
+
+                else if(type == TokenType::DOUBLE) {
+                    _instructions[_current_func].emplace_back(Operation::SNEW, 2);
+                }
 
                 if(next.value().GetType() == TokenType::SEMICOLON)
                     return {};
@@ -569,15 +1006,21 @@ namespace c0 {
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrDuplicateDeclaration);
 
             if(type == TokenType::DOUBLE)
-                _instructions[_current_func].emplace_back(Operation::IPUSH, 2);
+                _instructions[_current_func].emplace_back(Operation::SNEW, 2);
             else
-                _instructions[_current_func].emplace_back(Operation::IPUSH, 1);
+                _instructions[_current_func].emplace_back(Operation::SNEW, 1);
 
-            _instructions[_current_func].emplace_back(Operation::NEW);
+            auto identifier = next.value();
+
 
             next = nextToken();
             if(!next.has_value() || next.value().GetType() != TokenType::ASSIGN_SIGN)
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrConstantNeedValue);
+
+
+            addConstant(identifier, type);
+            auto index = getIndex(identifier.GetValueString());
+            _instructions[_current_func].emplace_back(Operation::LOADA, index.first, index.second);
 
             ////调用表达式子程序
             TokenType typeTest;
@@ -607,7 +1050,6 @@ namespace c0 {
             else
                 _instructions[_current_func].emplace_back(Operation::ISTORE);
 
-            addConstant(next.value(), type);
             next = nextToken();
             if(!next.has_value())
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
@@ -1004,6 +1446,12 @@ namespace c0 {
                 myType = TokenType ::INT;
                 break;
 	        }
+            case TokenType ::HEXADECIMAL: {
+                int32_t index = addRuntimeConsts(tk);
+                _instructions[_current_func].emplace_back(Operation::LOADC, index);
+                myType = TokenType ::INT;
+                break;
+            }
 	        case TokenType::CHAR_VALUE: {
 	            char val = std::any_cast<char>(tk.GetValue());
                 _instructions[_current_func].emplace_back(Operation::BIPUSH, val);
@@ -1078,6 +1526,7 @@ namespace c0 {
                     break;
                 }
                 default:
+                    unreadToken();
                     return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidFunctionParamType);
             }
             itr++;
@@ -1108,11 +1557,75 @@ namespace c0 {
         }
 
         next = nextToken();
-        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET)
+        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
 
         _instructions[_current_func].emplace_back(Operation::CALL, f_index);
         return {};
+	}
+
+	// <return-statement> ::= 'return' [<expression>] ';'
+    std::optional<CompilationError> Analyser::analyseRetStatement() {
+	    ////进入此函数前已经读取return
+	    auto next = nextToken();
+	    int32_t _current = _nextFunc - 1;
+	    if(_current < 0)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
+
+	    const TokenType retType = _funcs[_current].first;
+
+
+	    next = nextToken();
+	    if(!next.has_value())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
+
+	    auto type = next.value().GetType();
+	    if(retType == TokenType::VOID) {
+	        if(type == TokenType::SEMICOLON){
+                _instructions[_current_func].emplace_back(Operation::RET);
+                return {};
+	        }
+	        else {
+	            unreadToken();
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+	        }
+	    }
+
+        unreadToken();
+
+        auto err = analyseExpression(type);
+        if(err.has_value())
+            return err;
+            //return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
+
+        if(type == TokenType::VOID)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
+
+	    if(retType == TokenType::DOUBLE) {
+	        if(type == TokenType::INT || type == TokenType::CHAR)
+	            _instructions[_current_func].emplace_back(Operation::I2D);
+
+            _instructions[_current_func].emplace_back(Operation::DRET);
+	    }
+	    else if(retType == TokenType::INT || retType == TokenType::CHAR) {
+	        if(type == TokenType::DOUBLE)
+	            _instructions[_current_func].emplace_back(Operation::D2I);
+
+	        if(retType == TokenType::CHAR && type != TokenType::CHAR)
+                _instructions[_current_func].emplace_back(Operation::I2C);
+
+            _instructions[_current_func].emplace_back(Operation::IRET);
+	    }
+
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+	    }
+
+	    return {};
 	}
 
 	// <assignment-expression> ::=
@@ -1145,25 +1658,36 @@ namespace c0 {
         if(typeTest == TokenType::VOID)
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
 
-        if(type == TokenType::INT && typeTest == TokenType::DOUBLE)
-            _instructions[_current_func].emplace_back(Operation::D2I);
-        else if(type == TokenType::DOUBLE && (typeTest == TokenType::INT || typeTest == TokenType::CHAR))
-            _instructions[_current_func].emplace_back(Operation::I2D);
+        if(type == TokenType::INT) {
+            if(typeTest == TokenType::DOUBLE)
+                _instructions[_current_func].emplace_back(Operation::D2I);
+            _instructions[_current_func].emplace_back(Operation::ISTORE);
+        }
+        else if(type == TokenType::DOUBLE) {
+            if(typeTest == TokenType::INT || typeTest == TokenType::CHAR)
+                _instructions[_current_func].emplace_back(Operation::I2D);
+            _instructions[_current_func].emplace_back(Operation::DSTORE);
+        }
         else if(type == TokenType::CHAR) {
             if(typeTest == TokenType::DOUBLE)
                 _instructions[_current_func].emplace_back(Operation::D2I);
             _instructions[_current_func].emplace_back(Operation::I2C);
+            _instructions[_current_func].emplace_back(Operation::ISTORE);
         }
 
-        if(type == TokenType::CHAR || type == TokenType::INT)
-            _instructions[_current_func].emplace_back(Operation::ISTORE);
-        else if(type == TokenType::DOUBLE)
-            _instructions[_current_func].emplace_back(Operation::DSTORE);
-        else
-            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidType);
 
-        if(!isInitializedVariable(tk.GetValueString()))
-            _vars[_current_level][tk.GetValueString()] = _uninitialized_vars[_current_level][tk.GetValueString()];
+        if(!isInitializedVariable(tk.GetValueString())) {
+            //std::cout<<_current_level - index.first<<"\n";
+            int32_t level = _current_level;
+            while(level >= 0) {
+                if(_uninitialized_vars[level].find(tk.GetValueString()) != _uninitialized_vars[level].end()) {
+                    _vars[level][tk.GetValueString()] = _uninitialized_vars[level][tk.GetValueString()];
+                    _uninitialized_vars[level].erase(tk.GetValueString());
+                    break;
+                }
+                level --;
+            }
+        }
 
         return {};
 	}
@@ -1227,25 +1751,37 @@ namespace c0 {
 	}
 
 	int32_t Analyser::addRuntimeConsts(const Token& tk) {
+	    if(_runtime_consts_index.find(tk.GetValueString()) != _runtime_consts_index.end())
+	        return _runtime_consts_index[tk.GetValueString()];
+
 	    std::string s;
+	    std::stringstream ss;
 	    switch(tk.GetType()) {
 	        case TokenType ::IDENTIFIER:
 	        case TokenType ::STRING_VALUE: {
 	            s = "S";
+	            ss << '\"';
+	            ss << tk.GetValueString();
+	            ss << '\"';
 	            break;
 	        }
+	        case TokenType ::HEXADECIMAL:
 	        case TokenType::UNSIGNED_INTEGER: {
 	            s = "I";
+	            ss << tk.GetValueString();
 	            break;
 	        }
 	        case TokenType ::DOUBLE_VALUE: {
 	            s = "D";
+	            ss << tk.GetValueString();
 	            break;
 	        }
             default:
                 return -1;
 	    }
-	    _runtime_consts[_consts_offset] = std::make_tuple(s, tk.GetValueString());
+	    std::string str = ss.str();
+	    _runtime_consts[_consts_offset] = std::make_tuple(s, str);
+	    _runtime_consts_index[tk.GetValueString()] = _consts_offset;
 	    return _consts_offset++;
 	}
 
@@ -1326,8 +1862,8 @@ namespace c0 {
 	}
 	bool Analyser::isInitializedVariable(const std::string&s) {
         int i;
-        for(i = _current_level; i >= 0 && _vars[i].find(s) == _vars[i].end(); i--);
-        return _vars[i].find(s) != _vars[i].end();
+        for(i = _current_level; i >= 0 && _vars[i].find(s) == _vars[i].end() && _consts[i].find(s) == _consts[i].end() ; i--);
+        return _vars[i].find(s) != _vars[i].end() || _consts[i].find(s) != _consts[i].end();
 	}
 
 	bool Analyser::isConstant(const std::string&s) {
