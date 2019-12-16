@@ -52,6 +52,8 @@ namespace c0 {
 		int32_t GetX() const { return _x; }
 		int32_t GetOpt() const { return _option; }
 
+		void set_X(const int32_t& x){_x = x;}
+
 	private:
 		Operation _opr;
 		int32_t _x;
