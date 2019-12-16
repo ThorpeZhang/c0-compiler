@@ -58,9 +58,9 @@ void Analyse(std::istream& input, std::ostream& output){
 
     //// 输出各函数代码
 	auto v = p.first;
-    _i = 0;
 	for (auto& it : v) {
         output << fmt::format(".F{}:\n", it.first);
+        _i = 0;
         for(auto & itr : it.second)
             output << fmt::format("{}\t{}\n", _i++, itr);
 	}

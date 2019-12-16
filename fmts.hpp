@@ -84,6 +84,18 @@ namespace fmt {
 			case c0::ErrStatementSequence:
 				name = "Something went wrong in a statement sequence.";
 				break;
+			case c0::ErrContinue:
+			    name = "Zai? Wei shen me xjb xie continue?";
+			    break;
+			case c0::ErrBreak:
+			    name = "Zai? Wei shen me xjb xie break?";
+			    break;
+		    case c0::ErrLoop:
+		        name = "Loop Wrong!";
+		        break;
+
+			case c0::ErrReturnWrong:
+			    name = "Something went wrong in a return statement.";
 						}
 			return format_to(ctx.out(), name);
 		}
@@ -502,9 +514,10 @@ namespace fmt {
 			case c0::BIPUSH:
 			case c0::IPUSH:
 			case c0::POPN:
-			case c0::LOADC:
 			case c0::SNEW:
+                return format_to(ctx.out(), "{} {}", p.GetOperation(), p.GetX());
 			case c0::JMP:
+            case c0::LOADC:
 			case c0::JE:
 			case c0::JNE:
 			case c0::JL:
@@ -512,10 +525,10 @@ namespace fmt {
 			case c0::JG:
 			case c0::JLE:
             case c0::CALL:
-				return format_to(ctx.out(), "{} {}", p.GetOperation(), p.GetX());
+				return format_to(ctx.out(), "{} {}", p.GetOperation(), (int16_t)p.GetX());
 			
 			case c0::LOADA:
-				return format_to(ctx.out(), "{} {} {}", p.GetOperation(), p.GetX(), p.GetOpt());
+				return format_to(ctx.out(), "{} {}, {}", p.GetOperation(), p.GetX(), (int16_t)p.GetOpt());
 			}
 			return format_to(ctx.out(), "ILL");
 		}
