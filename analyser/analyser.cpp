@@ -216,19 +216,16 @@ namespace c0 {
             }
             else if(type == TokenType::ASSIGN_SIGN)
                 err = analyseAssignmentStatement();
-            else {
-                while(next.has_value()) {
-                    next = nextToken();
-                }
+            else
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrStatementSequence);
-            }
+
+            if(err.has_value())
+                return err;
 
             next = nextToken();
             if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 
-            if(err.has_value())
-                return err;
             return {};
         }
         else if(type == TokenType::FOR) {
@@ -1177,7 +1174,6 @@ namespace c0 {
         // 类型只能为int、double、char
 	    auto next = nextToken();
 
-	    next = nextToken();
 	    if(!next.has_value())
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNeedIdentifier);
 
