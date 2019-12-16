@@ -148,7 +148,7 @@ namespace c0 {
                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                     }
                     // 如果读到的字符导致了状态的转移，说明它是一个token的第一个字符
-                    if (current_state != DFAState::INITIAL_STATE && current_state != DFAState::STRING_VALUE_STATE) // ignore white spaces
+                    if (current_state != DFAState::INITIAL_STATE && current_state != DFAState::STRING_VALUE_STATE ) // ignore white spaces
                         ss << ch; // 存储读到的字符
                     break;
                 }
@@ -321,7 +321,7 @@ namespace c0 {
 
                 //在除号状态下处理注释
                 case DIVISION_SIGN_STATE: {
-                    ss.clear();
+                    ss.str("");
                     if(current_char.has_value()){
                         auto ch = current_char.value();
                         if(ch == '/') {
@@ -625,7 +625,7 @@ namespace c0 {
 
     std::pair<std::optional<Token>, std::optional<CompilationError>> Tokenizer::analyseIdentifier(const std::pair<int64_t, int64_t>& pos, const std::string& str) {
         auto type = TokenType ::IDENTIFIER;
-        if(c0::isdigit(str[0])) {
+        if(!c0::isalpha(str[0])) {
             return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidIdentifier));
         }
         else if(str == "const") {
