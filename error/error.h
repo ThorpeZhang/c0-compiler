@@ -42,6 +42,10 @@ namespace c0 {
         ErrNoLeftBrace,
         ErrNoRightBrace,
         ErrStatementSequence,
+        ErrReturnWrong,
+        ErrBreak,
+        ErrContinue,
+        ErrLoop,
 	};
 
 	class CompilationError final{
