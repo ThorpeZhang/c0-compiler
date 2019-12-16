@@ -1498,6 +1498,7 @@ namespace c0 {
                             _instructions[_current_func].emplace_back(Operation::D2I);
 
                         typeTest = TokenType::INT;
+                        break;
                     }
 
                     case TokenType ::CHAR :{
@@ -1509,6 +1510,7 @@ namespace c0 {
                         }
 
                         typeTest = TokenType ::CHAR;
+                        break;
                     }
 
                     default:
