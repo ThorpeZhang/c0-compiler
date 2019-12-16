@@ -216,8 +216,12 @@ namespace c0 {
             }
             else if(type == TokenType::ASSIGN_SIGN)
                 err = analyseAssignmentStatement();
-            else
+            else {
+                while(next.has_value()) {
+                    next = nextToken();
+                }
                 return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrStatementSequence);
+            }
 
             next = nextToken();
             if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
@@ -226,6 +230,10 @@ namespace c0 {
             if(err.has_value())
                 return err;
             return {};
+        }
+        else if(type == TokenType::FOR) {
+            unreadToken();
+            err = analyseForStatement();
         }
         else if(type == TokenType::IF) {
             unreadToken();
@@ -557,6 +565,176 @@ namespace c0 {
         return {};
 	}
 
+	// 'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
+	// <for-init-statement> ::=
+    //    [<assignment-expression>{','<assignment-expression>}]';'
+    // <for-update-expression> ::=
+    //    (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
+    std::optional<CompilationError> Analyser::analyseForStatement() {
+	    ////进入此函数前已经读到了for
+	    auto next = nextToken();
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+	    }
+        next = nextToken();
+        if(!next.has_value())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+
+        if(next.value().GetType() != TokenType::SEMICOLON) {
+            // 开始分析赋值语句
+            unreadToken();
+            while(true) {
+                auto err = analyseAssignmentStatement();
+                if(err.has_value())
+                    return err;
+
+                next = nextToken();
+                if(!next.has_value())
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+
+                if(next.value().GetType() == TokenType::SEMICOLON)
+                    break;
+                else if(next.value().GetType() == TokenType::COMMA)
+                    continue;
+                else
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+            }
+        }
+
+	    int32_t beginOfFor = _instructions[_current_func].size();
+        next = nextToken();
+        if(!next.has_value())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+
+        int32_t _option;
+        // je：  0   value是0
+        // jne： 1   value不是0
+        // jl：  2   value是负数
+        // jge： 3   value不是负数
+        // jg：  4   value是正数
+        // jle： 5   value不是正数
+        // Condition返回的是不满足条件的_option
+        if(next.value().GetType() == TokenType::SEMICOLON) {
+            _instructions[_current_func].emplace_back(Operation::BIPUSH, 1);
+            _option = 0;
+        }
+        else {
+            unreadToken();
+            auto err = analyseCondition(_option);
+            if(err.has_value())
+                return err;
+
+            next = nextToken();
+            if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON){
+                unreadToken();
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+            }
+        }
+        Operation _op;
+        switch (_option) {
+            case 0:
+                _op = Operation ::JE;
+                break;
+            case 1:
+                _op = Operation ::JNE;
+                break;
+            case 2:
+                _op = Operation ::JL;
+                break;
+            case 3:
+                _op = Operation ::JGE;
+                break;
+            case 4:
+                _op = Operation ::JG;
+                break;
+            case 5:
+                _op = Operation ::JLE;
+                break;
+            default:
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+
+        }
+
+        int32_t _jmp1 = _instructions[_current_func].size();
+        _instructions[_current_func].emplace_back(_op);
+
+        // 分析update语句
+
+        int32_t continueOfFor = _instructions[_current_func].size();
+        next = nextToken();
+        if(!next.has_value())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+
+        if(next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
+            while(true) {
+                next = nextToken();
+                if(!next.has_value() || next.value().GetType() != TokenType::IDENTIFIER)
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNeedIdentifier);
+
+                next = nextToken();
+                if(!next.has_value())
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+
+                unreadToken();
+                unreadToken();
+                std::optional<CompilationError> err;
+                TokenType typeTest;
+                if(next.value().GetType() == TokenType::ASSIGN_SIGN)
+                    err = analyseAssignmentStatement();
+                else if(next.value().GetType() == TokenType::LEFT_BRACKET)
+                    err = analyseFunctionCall(typeTest);
+                else
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+
+                if(err.has_value())
+                    return err;
+
+                next = nextToken();
+                if(!next.has_value())
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+                if(next.value().GetType() == TokenType::COMMA)
+                    continue;
+                else if(next.value().GetType() == TokenType::RIGHT_BRACKET)
+                    break;
+                else
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrLoop);
+            }
+        }
+
+        _current_loop++;
+
+        auto err = analyseStatement();
+        if(err.has_value())
+            return err;
+
+        _instructions[_current_func].emplace_back(Operation::JMP, beginOfFor);
+
+        int32_t breakOfFor = _instructions[_current_func].size();
+        _instructions[_current_func][_jmp1].set_X(breakOfFor);
+
+        auto itr = breaks[_current_loop].begin();
+        while(itr != breaks[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(breakOfFor);
+            itr++;
+        }
+        breaks[_current_loop].clear();
+        breaks.erase(_current_loop);
+
+        itr = continues[_current_loop].begin();
+        while(itr != continues[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(continueOfFor);
+            itr++;
+        }
+        continues[_current_loop].clear();
+        continues.erase(_current_loop);
+
+        _current_loop--;
+        return {};
+	}
+
 	// 'do' <statement> 'while' '(' <condition> ')' ';'
     std::optional<CompilationError> Analyser::analyseDoWhileStatement() {
 	    //// 进入此函数前已经读到了do
@@ -566,8 +744,9 @@ namespace c0 {
 	    int32_t beginOfDoWhile = _instructions[_current_func].size();
 
 	    auto err = analyseStatement();
-	    if(err.has_value())
-	        return err;
+	    if(err.has_value()) {
+            return err;
+	    }
 
         ////补全continue的参数
         int32_t continueOfDoWhile = _instructions[_current_func].size();
@@ -596,6 +775,18 @@ namespace c0 {
 	    err = analyseCondition(_option);
 	    if(err.has_value())
 	        return err;
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+        }
 	    // je：  0   value是0
         // jne： 1   value不是0
         // jl：  2   value是负数
@@ -779,7 +970,6 @@ namespace c0 {
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 
         if(!isInitializedVariable(tk.GetValueString())) {
-            //std::cout<<_current_level - index.first<<"\n";
             int32_t level = _current_level;
             while(level >= 0) {
                 if(_uninitialized_vars[level].find(tk.GetValueString()) != _uninitialized_vars[level].end()) {
@@ -1677,7 +1867,6 @@ namespace c0 {
 
 
         if(!isInitializedVariable(tk.GetValueString())) {
-            //std::cout<<_current_level - index.first<<"\n";
             int32_t level = _current_level;
             while(level >= 0) {
                 if(_uninitialized_vars[level].find(tk.GetValueString()) != _uninitialized_vars[level].end()) {
