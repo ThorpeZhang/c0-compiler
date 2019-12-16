@@ -215,14 +215,16 @@ namespace c0 {
                 }
                 case HEXADECIMAL_STATE:{
                     if(!current_char.has_value()) {
-                        return analyseHexadecimal(pos, ss.str());
+                        std::string str = ss.str();
+                        return std::make_pair(std::make_optional<Token>(TokenType::HEXADECIMAL, str, pos, currentPos()), std::optional<CompilationError>());
                     }
                     auto ch = current_char.value();
                     if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'Z'))
                         ss << ch;
                     else{
                         unreadLast();
-                        return analyseHexadecimal(pos, ss.str());
+                        std::string str = ss.str();
+                        return std::make_pair(std::make_optional<Token>(TokenType::HEXADECIMAL, str, pos, currentPos()), std::optional<CompilationError>());
                     }
                     break;
                 }
@@ -619,17 +621,6 @@ namespace c0 {
                 break;
         }
         return {};
-    }
-
-    std::pair<std::optional<Token>, std::optional<CompilationError>> Tokenizer::analyseHexadecimal(const std::pair<int64_t, int64_t>& pos, const std::string& str) {
-        int32_t num = 0;
-        try{
-            num = stoi(str, NULL, 16);
-        }
-        catch (const std::out_of_range&) {
-            return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrIntegerOverflow));
-        }
-        return std::make_pair(std::make_optional<Token>(TokenType::UNSIGNED_INTEGER, num, pos, currentPos()), std::optional<CompilationError>());
     }
 
     std::pair<std::optional<Token>, std::optional<CompilationError>> Tokenizer::analyseIdentifier(const std::pair<int64_t, int64_t>& pos, const std::string& str) {

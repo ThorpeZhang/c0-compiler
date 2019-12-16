@@ -91,7 +91,6 @@ namespace c0 {
 		std::pair<uint64_t, uint64_t> previousPos();
 		std::optional<char> nextChar();
         std::pair<std::optional<Token>, std::optional<CompilationError>> analyseIdentifier(const std::pair<int64_t, int64_t>&, const std::string&);
-        std::pair<std::optional<Token>, std::optional<CompilationError>> analyseHexadecimal(const std::pair<int64_t, int64_t>&, const std::string &);
 		bool isEOF();
 		void unreadLast();
 		bool isAccepted(const char&);
