@@ -2100,9 +2100,7 @@ namespace c0 {
 	        case TokenType ::IDENTIFIER:
 	        case TokenType ::STRING_VALUE: {
 	            s = "S";
-	            ss << '\"';
 	            ss << tk.GetValueString();
-	            ss << '\"';
 	            break;
 	        }
 	        case TokenType ::HEXADECIMAL:

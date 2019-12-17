@@ -17,7 +17,7 @@ set(lib_src
 	analyser/analyser.h
 	analyser/analyser.cpp
 	instruction/instruction.h
-)
+		)
 
 set(main_src
 	main.cpp
