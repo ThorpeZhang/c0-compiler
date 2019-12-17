@@ -11,6 +11,8 @@
 #include <cstdint>
 #include <cstddef> // for std::size_t
 
+#include <set>
+
 namespace c0 {
 
 	class Analyser final {

@@ -45,6 +45,8 @@ namespace c0 {
 		RIGHT_BRACKET,
 		LEFT_BRACE,
 		RIGHT_BRACE,
+		//冒号
+		COLON_SIGN,
         //SINGLE_QUOTATION,
         //DOUBLE_QUOTATION,
         NOT_EQUAL_SIGN,

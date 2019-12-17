@@ -93,6 +93,21 @@ namespace fmt {
 		    case c0::ErrLoop:
 		        name = "Loop Wrong!";
 		        break;
+			case c0::ErrInvalidSwitchType:
+			    name = "Switch zhi zhi chi int or char.";
+			    break;
+            case c0::ErrNeedCase:
+			    name = "Need 'case'.";
+			    break;
+			case c0::ErrDupCase:
+			    name = "Bu yao chong fu case de value!";
+			    break;
+			case c0::ErrInvalidCaseType:
+			    name = "Case zhi zhi chi int or char";
+			    break;
+			case c0::ErrNeedColon:
+			    name = "Zai? Wei shen me bu xie mao hao?";
+			    break;
 
 			case c0::ErrReturnWrong:
 			    name = "Something went wrong in a return statement.";
@@ -265,6 +280,9 @@ namespace fmt {
 			case c0::DOUBLE_VALUE:
 				name = "DoubleValue";
 				break;
+			case c0::COLON_SIGN:
+			    name = "Colon";
+			    break;
 			}
 			return format_to(ctx.out(), name);
 		}

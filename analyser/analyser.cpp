@@ -194,6 +194,10 @@ namespace c0 {
             unreadToken();
             err = analyseRetStatement();
         }
+        else if(type == TokenType::SWITCH) {
+            unreadToken();
+            err = analyseSwitchStatement();
+        }
         else if(type == TokenType::IDENTIFIER) {
             next = nextToken();
             if(!next.has_value())
@@ -270,8 +274,6 @@ namespace c0 {
             unreadToken();
             if(next.value().GetType() == TokenType::RIGHT_BRACE)
                 return {};
-
-
 
             auto err = analyseStatement();
             if(err.has_value())
@@ -834,11 +836,162 @@ namespace c0 {
 	    return {};
 	}
 
-	// 'for' '('<for-init-statement> [<condition>]';' [<for-update-expression>]')' <statement>
-	// <for-init-statement> ::=
-    //    [<assignment-expression>{','<assignment-expression>}]';'
-    // <for-update-expression> ::=
-    //    (<assignment-expression>|<function-call>){','(<assignment-expression>|<function-call>)}
+	// 'switch' '(' <expression> ')' '{' {<labeled-statement>} '}'
+	// <labeled-statement> ::=
+    //     'case' (<integer-literal>|<char-literal>) ':' <statement>
+    //    |'default' ':' <statement>
+    std::optional<CompilationError> Analyser::analyseSwitchStatement() {
+	    //// 进入此函数前已经读到了switch
+	    auto next = nextToken();
+	    next = nextToken();
+	    if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET) {
+	        unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+	    }
+
+	    TokenType typeTest;
+	    auto err = analyseExpression(typeTest);
+	    if(err.has_value())
+	        return err;
+	    if(typeTest != TokenType::INT && typeTest != TokenType::CHAR)
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidSwitchType);
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACKET) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACE) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoLeftBrace);
+        }
+
+        _current_loop++;
+        std::set<std::string> cases;
+        std::vector<int32_t > ends;
+
+        while(true) {
+            next = nextToken();
+            if(!next.has_value())
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNeedCase);
+
+            if(next.value().GetType() == TokenType::DEFAULT) {
+                next = nextToken();
+                if(!next.has_value() || next.value().GetType() != TokenType::COLON_SIGN)
+                    return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNeedColon);
+
+                auto itr = ends.begin();
+                while(itr != ends.end()) {
+                    _instructions[_current_func][*itr].set_X(_instructions[_current_func].size());
+                    itr++;
+                }
+                ends.clear();
+
+                err = analyseStatement();
+                if(err.has_value())
+                    return err;
+
+                break;
+            }
+
+            if(next.value().GetType() != TokenType::CASE) {
+                unreadToken();
+                auto itr = ends.begin();
+                while(itr != ends.end()) {
+                    _instructions[_current_func][*itr].set_X(_instructions[_current_func].size());
+                    itr++;
+                }
+                ends.clear();
+                break;
+            }
+
+            next = nextToken();
+            if(!next.has_value() ||
+                (next.value().GetType() != TokenType::UNSIGNED_INTEGER
+                        && next.value().GetType() != TokenType::HEXADECIMAL
+                        && next.value().GetType() != TokenType::CHAR_VALUE)) {
+                unreadToken();
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidCaseType);
+            }
+
+            auto type = next.value().GetType();
+
+            std::string str = next.value().GetValueString();
+            if(cases.find(str) != cases.end())
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrDupCase);
+
+            _instructions[_current_func].emplace_back(Operation::DUP);
+            cases.insert(str);
+            if(type == TokenType::HEXADECIMAL) {
+                int32_t index = addRuntimeConsts(next.value());
+                _instructions[_current_func].emplace_back(Operation::LOADC, index);
+            }
+            else if(type == TokenType::UNSIGNED_INTEGER) {
+                int32_t val = std::any_cast<int32_t>(next.value().GetValue());
+                _instructions[_current_func].emplace_back(Operation::IPUSH, val);
+            }
+            else {
+                char val = std::any_cast<char>(next.value().GetValue());
+                _instructions[_current_func].emplace_back(Operation::BIPUSH, val);
+            }
+
+            _instructions[_current_func].emplace_back(Operation::ICMP);
+            int32_t _jmp = _instructions[_current_func].size();
+            _instructions[_current_func].emplace_back(Operation::JNE);
+
+            next = nextToken();
+            if(!next.has_value() || next.value().GetType() != TokenType::COLON_SIGN)
+                return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNeedColon);
+
+            auto itr = ends.begin();
+            while(itr != ends.end()) {
+                _instructions[_current_func][*itr].set_X(_instructions[_current_func].size());
+                itr++;
+            }
+            ends.clear();
+
+            err = analyseStatement();
+            if(err.has_value())
+                return err;
+
+            ends.emplace_back(_instructions[_current_func].size());
+            _instructions[_current_func].emplace_back(Operation::JMP);
+
+            _instructions[_current_func][_jmp].set_X(_instructions[_current_func].size());
+
+        }
+
+        if(_current_loop == 1 && !continues[_current_loop].empty())
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrContinue);
+
+        next = nextToken();
+        if(!next.has_value() || next.value().GetType() != TokenType::RIGHT_BRACE) {
+            unreadToken();
+            return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBrace);
+        }
+
+        auto itr = breaks[_current_loop].begin();
+        while(itr != breaks[_current_loop].end()) {
+            _instructions[_current_func][*itr].set_X(_instructions[_current_func].size());
+            itr++;
+        }
+        breaks[_current_loop].clear();
+        breaks.erase(_current_loop);
+
+        itr = continues[_current_loop].begin();
+        while(itr != continues[_current_loop].end()) {
+            continues[_current_loop - 1].emplace_back(*itr);
+            itr++;
+        }
+        continues[_current_loop].clear();
+        continues.erase(_current_loop);
+
+        _instructions[_current_func].emplace_back(Operation::NOP);
+        _current_loop--;
+        return {};
+	}
 
 
 	// <print-statement> ::=

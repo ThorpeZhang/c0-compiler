@@ -44,6 +44,7 @@ namespace c0 {
 			COMMA_STATE,
 			ANNOTATE_STATE_1,
             ANNOTATE_STATE_2,
+            COLON_SIGN_STATE,
 		};
 	public:
 		Tokenizer(std::istream& ifs)

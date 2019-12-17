@@ -130,6 +130,9 @@ namespace c0 {
                             case '\"':
                                 current_state = DFAState ::STRING_VALUE_STATE;
                                 break;
+                            case ':':
+                                current_state = DFAState ::COLON_SIGN_STATE;
+                                break;
 
                                 // 不接受的字符导致的不合法的状态
                             default:
@@ -296,6 +299,11 @@ namespace c0 {
                     // 请思考这里为什么要回退，在其他地方会不会需要
                     unreadLast(); // Yes, we unread last char even if it's an EOF.
                     return std::make_pair(std::make_optional<Token>(TokenType::PLUS_SIGN, '+', pos, currentPos()), std::optional<CompilationError>());
+                }
+
+                case COLON_SIGN_STATE: {
+                    unreadLast();
+                    return std::make_pair(std::make_optional<Token>(TokenType::COLON_SIGN, ':', pos, currentPos()), std::optional<CompilationError>());
                 }
                     // 当前状态为减号的状态
                 case MINUS_SIGN_STATE: {

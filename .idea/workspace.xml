@@ -15,21 +15,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b6a161f0-6329-45c8-bf2e-027c126b3f95" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyser/analyser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/analyser/analyser.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analyser/analyser.h" beforeDir="false" afterPath="$PROJECT_DIR$/analyser/analyser.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/3rd_party/argparse/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/3rd_party/argparse/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/3rd_party/catch2/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/3rd_party/catch2/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/CMakeFiles/fmt.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/CMakeFiles/fmt.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/CMakeFiles/fmt.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/CMakeFiles/fmt.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/3rd_party/fmt/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CTestTestfile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CTestTestfile.cmake" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error/error.h" beforeDir="false" afterPath="$PROJECT_DIR$/error/error.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fmts.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/fmts.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/token.h" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/token.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.h" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.h" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,8 +49,14 @@
   </component>
   <component name="ProjectId" id="1UF7pXranqG1EVSuCjVSRrW7F9q" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.advertisement.text.has.clang-format" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -57,18 +65,6 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.YAML" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="CMake Application.cc0">
     <configuration name="cc0" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cc0" TARGET_NAME="cc0" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cc0" RUN_TARGET_NAME="cc0">
@@ -98,6 +94,18 @@
       <item itemvalue="CMake Application.fmt" />
     </list>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -111,6 +119,15 @@
       <workItem from="1574940673335" duration="12072000" />
       <workItem from="1575543200257" duration="1033000" />
       <workItem from="1575943635361" duration="5468000" />
+      <workItem from="1576137442262" duration="14276000" />
+      <workItem from="1576164451442" duration="3395000" />
+      <workItem from="1576177993851" duration="20369000" />
+      <workItem from="1576299123503" duration="5690000" />
+      <workItem from="1576322472909" duration="2825000" />
+      <workItem from="1576329454436" duration="129000" />
+      <workItem from="1576329618629" duration="17833000" />
+      <workItem from="1576380047625" duration="57114000" />
+      <workItem from="1576504078636" duration="5920000" />
     </task>
     <servers />
   </component>
@@ -129,5 +146,33 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1576356182942">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1576356182942" />
+    <state width="1398" height="245" key="GridCell.Tab.0.center" timestamp="1576356182942">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1576356182942" />
+    <state width="1398" height="245" key="GridCell.Tab.0.left" timestamp="1576356182941">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1576356182941" />
+    <state width="1398" height="245" key="GridCell.Tab.0.right" timestamp="1576356182942">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1576356182942" />
+    <state x="397" y="267" key="com.intellij.ide.util.TipDialog" timestamp="1576504079602">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="397" y="267" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1576504079602" />
+    <state x="397" y="268" key="com.intellij.ide.util.TipDialog/0.23.1440.825@0.23.1440.825" timestamp="1576137552459" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1576400189214">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1576400189214" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/1440.0.1112.834/0.0.1440.900@0.0.1440.900" timestamp="1576164106613" />
   </component>
 </project>

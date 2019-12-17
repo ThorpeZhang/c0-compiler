@@ -46,6 +46,11 @@ namespace c0 {
         ErrBreak,
         ErrContinue,
         ErrLoop,
+        ErrInvalidSwitchType,
+        ErrNeedCase,
+        ErrDupCase,
+        ErrInvalidCaseType,
+        ErrNeedColon,
 	};
 
 	class CompilationError final{
