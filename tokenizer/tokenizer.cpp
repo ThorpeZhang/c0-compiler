@@ -452,27 +452,34 @@ namespace c0 {
                     if(isAccepted(ch))
                         res = ch;
                     else {
-                        switch(ch){
-                            case '\"':
-                                res = '\"';
-                                break;
-                            case '\'':
-                                res = '\'';
-                                break;
-                            case '\\': {
-                                current_char = nextChar();
-                                if(!current_char.has_value())
-                                    return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
-                                ch = current_char.value();
-                                if(ch != 'x') {
-                                    unreadLast();
-                                    res = '\\';
+
+                        if(ch == '\\') {
+                            current_char = nextChar();
+                            if(!current_char.has_value())
+                                return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                            ch = current_char.value();
+                            switch (ch) {
+                                case '\\':
+                                    res = '\x5c';
                                     break;
-                                }
-                                else {
+                                case 't':
+                                    res = '\x09';
+                                    break;
+                                case 'n':
+                                    res = '\x0a';
+                                    break;
+                                case 'r':
+                                    res = '\x0d';
+                                    break;
+                                case '\'':
+                                    res = '\x27';
+                                    break;
+                                case '\"':
+                                    res = '\x22';
+                                    break;
+                                case 'x': {
                                     std::stringstream _ss;
-                                    int32_t _ch;
-                                    _ss << '0';
+                                    _ss << '\\';
                                     _ss << 'x';
                                     current_char = nextChar();
                                     if(!current_char.has_value())
@@ -484,36 +491,28 @@ namespace c0 {
                                         unreadLast();
                                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                                     }
+
                                     current_char = nextChar();
-                                    if(current_char.has_value()){
-                                        ch = current_char.value();
-                                        if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
-                                            _ss << ch;
-                                        else
-                                            unreadLast();
-                                    }
-                                    try{
-                                        _ch = stoi(_ss.str(), NULL, 16);
-                                    }catch(const std::out_of_range&){
+                                    if(!current_char.has_value())
+                                        return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                                    ch = current_char.value();
+                                    if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
+                                        _ss << ch;
+                                    else{
+                                        unreadLast();
                                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                                     }
-                                    res = _ch;
+
+                                    ss >> res;
                                     break;
                                 }
+                                default:
+                                    return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                             }
-                            case '\n':
-                                res = '\n';
-                                break;
-                            case '\r':
-                                res = '\r';
-                                break;
-                            case '\t':
-                                res = '\t';
-                                break;
-
-                            default:
-                                unreadLast();
-                                return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                        }
+                        else {
+                            unreadLast();
+                            return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                         }
                     }
 
@@ -543,71 +542,65 @@ namespace c0 {
                     }
                     if(isAccepted(ch))
                         ss << ch;
+
                     else {
-                        switch(ch){
-                            case '\"':
-                                ss << '\"';
-                                break;
-                            case '\'':
-                                ss << '\'';
-                                break;
-                            case '\\': {
-                                current_char = nextChar();
-                                if(!current_char.has_value())
-                                    return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
-                                ch = current_char.value();
-                                if(ch != 'x') {
-                                    unreadLast();
-                                    ss << '\\';
+                        if(ch == '\\') {
+                            current_char = nextChar();
+                            if(!current_char.has_value())
+                                return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                            ch = current_char.value();
+                            switch (ch) {
+                                case '\\':
+                                    ss << '\x5c';
                                     break;
-                                }
-                                else {
-                                    std::stringstream _ss;
-                                    int32_t _ch;
-                                    _ss << '0';
-                                    _ss << 'x';
+                                case 't':
+                                    ss << '\x09';
+                                    break;
+                                case 'n':
+                                    ss << '\x0a';
+                                    break;
+                                case 'r':
+                                    ss << '\x0d';
+                                    break;
+                                case '\'':
+                                    ss << '\x27';
+                                    break;
+                                case '\"':
+                                    ss << '\x22';
+                                    break;
+                                case 'x': {
+                                    ss << '\\';
+                                    ss << 'x';
                                     current_char = nextChar();
                                     if(!current_char.has_value())
                                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                                     ch = current_char.value();
                                     if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
-                                        _ss << ch;
+                                        ss << ch;
                                     else{
                                         unreadLast();
                                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                                     }
+
                                     current_char = nextChar();
-                                    if(current_char.has_value()){
-                                        ch = current_char.value();
-                                        if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
-                                            _ss << ch;
-                                        else
-                                            unreadLast();
-                                    }
-                                    try{
-                                        _ch = stoi(_ss.str(), NULL, 16);
-                                    }catch(const std::out_of_range&){
+                                    if(!current_char.has_value())
+                                        return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                                    ch = current_char.value();
+                                    if(c0::isdigit(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
+                                        ss << ch;
+                                    else{
+                                        unreadLast();
                                         return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                                     }
-                                    ch = _ch;
-                                    ss << ch;
                                     break;
                                 }
-                                break;
+                                default:
+                                    return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                             }
-                            case '\n':
-                                ss << '\n';
-                                break;
-                            case '\r':
-                                ss << '\r';
-                                break;
-                            case '\t':
-                                ss << '\t';
-                                break;
-
-                            default:
-                                unreadLast();
-                                return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
+                        }
+                        else {
+                            unreadLast();
+                            return std::make_pair(std::optional<Token>(), std::make_optional<CompilationError>(pos, ErrorCode::ErrInvalidInput));
                         }
                     }
                 }
@@ -748,7 +741,7 @@ namespace c0 {
     }
 
     bool Tokenizer::isAccepted(const char& ch) {
-        if(ch >= 33 && ch <= 126)
+        if(ch >= 33 && ch <= 126 && ch != '\\')
             return true;
         else
             return false;

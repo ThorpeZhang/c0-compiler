@@ -16,10 +16,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b6a161f0-6329-45c8-bf2e-027c126b3f95" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyser/analyser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/analyser/analyser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instruction/instruction.h" beforeDir="false" afterPath="$PROJECT_DIR$/instruction/instruction.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +114,7 @@
       <workItem from="1576329454436" duration="129000" />
       <workItem from="1576329618629" duration="17833000" />
       <workItem from="1576380047625" duration="57114000" />
-      <workItem from="1576504078636" duration="29507000" />
+      <workItem from="1576504078636" duration="32208000" />
     </task>
     <servers />
   </component>

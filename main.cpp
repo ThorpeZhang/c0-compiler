@@ -189,8 +189,17 @@ void Analyse(std::istream& input, std::ostream& output){
 	//// 输出常量表
     output << fmt::format(".constants:\n");
 	auto _const = analyser.getConst();
-	for(auto & itr : _const)
-        output << fmt::format("{} {} {}\n", itr.first, std::get<0>(itr.second), std::get<1>(itr.second));
+	for(auto & itr : _const) {
+	    std::string str = std::get<1>(itr.second);
+        std::string type = std::get<0>(itr.second);
+        if(type == "S") {
+            std::stringstream ss;
+            ss << '\"'; ss << str;  ss << '\"';
+            str.clear();
+            str = ss.str();
+        }
+        output << fmt::format("{} {} {}\n", itr.first, type, str);
+	}
 
 	//// 输出开始指令
     output << fmt::format(".start:\n");
