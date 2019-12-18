@@ -34,7 +34,7 @@ namespace c0 {
     public:
 	    int32_t opn;
 	private:
-		using int32_t = std::int32_t;
+		//using int32_t = std::int32_t;
 	public:
 		friend void swap(Instruction& lhs, Instruction& rhs);
 	public:

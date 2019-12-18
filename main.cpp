@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <string>
 
 std::vector<c0::Token> _tokenize(std::istream& input) {
 	c0::Tokenizer tkz(input);
@@ -41,7 +42,7 @@ void Tokenize(std::istream& input, std::ostream& output) {
 void Binaryse(std::istream& input, std::ostream& output) {
     char bytes[8];
     const auto writeNBytes = [&](void* addr, int count) {
-        assert(0 < count && count <= 8);
+        //assert(0 < count && count <= 8);
         char* p = reinterpret_cast<char*>(addr) + (count-1);
         for (int i = 0; i < count; ++i) {
             bytes[i] = *p--;
@@ -77,6 +78,51 @@ void Binaryse(std::istream& input, std::ostream& output) {
         ss << str;
         if(_type == "S") {
             output.write("\x00", 1);
+            ss.clear();    ss.str("");
+            auto _itr = str.begin();
+            while(_itr != str.end()) {
+                char itr = *_itr;
+                if(33 <= itr && itr <= 126 && itr != '\\')
+                    ss << itr;
+                else {
+                    _itr++;
+                    itr = *_itr;
+                    switch (itr) {
+                        case '\"':
+                            ss << '\x22';
+                            break;
+                        case '\'':
+                            ss << '\x27';
+                            break;
+                        case 't':
+                            ss << '\x09';
+                            break;
+                        case 'n':
+                            ss << '\x0a';
+                            break;
+                        case 'r':
+                            ss << '\x0d';
+                            break;
+                        case '\\':
+                            ss << '\x5c';
+                            break;
+                        case 'x':{
+                            std::stringstream _ss;
+                            _ss << '0'; _ss << 'x';
+                            _itr++; itr = *_itr;  _ss << itr;
+                            _itr++; itr = *_itr;  _ss << itr;
+                            uint8_t _ch = std::stoi(_ss.str(), NULL, 16);
+                            ss << _ch;
+                            break;
+                        }
+                        //default:
+                            //assert(("string error!", false));
+                    }
+                }
+                _itr++;
+            }
+
+            str.clear();    str = ss.str();
             uint16_t len = str.length();
             writeNBytes(&len, sizeof len);
             output.write(str.c_str(), len);
@@ -93,8 +139,8 @@ void Binaryse(std::istream& input, std::ostream& output) {
             ss >> v;
             writeNBytes(&v, sizeof v);
         }
-        else
-            assert(("unexpected error", false));
+        //else
+            //assert(("unexpected error", false));
     }
 
     auto to_binary = [&](const std::vector<c0::Instruction>& v) {
@@ -102,7 +148,6 @@ void Binaryse(std::istream& input, std::ostream& output) {
         writeNBytes(&instructions_count, sizeof instructions_count);
         for (auto& ins : v) {
             uint8_t op = ins.getBinaryInstruction();
-            printf("%02x\n",op);
             writeNBytes(&op, sizeof op);
             if (auto it = paramSizeOfOperation.find(ins.GetOperation()); it != paramSizeOfOperation.end()) {
                 auto paramSizes = it->second;
@@ -122,8 +167,8 @@ void Binaryse(std::istream& input, std::ostream& output) {
                         writeNBytes(&x, 4);
                         break;
                     }
-                    default:
-                        assert(("unexpected error", false));
+                    //default:
+                        //assert(("unexpected error", false));
                 }
                 if (paramSizes.size() == 2) {
                     switch (paramSizes[1]) {
@@ -142,8 +187,8 @@ void Binaryse(std::istream& input, std::ostream& output) {
                             writeNBytes(&y, 4);
                             break;
                         }
-                        default:
-                            assert(("unexpected error", false));
+                        //default:
+                            //assert(("unexpected error", false));
                     }
                 }
             }
@@ -260,35 +305,41 @@ int main(int argc, char** argv) {
 	std::ostream* output;
 	std::ifstream inf;
 	std::ofstream outf;
-	if (input_file != "-") {
-		inf.open(input_file, std::ios::in);
-		if (!inf) {
-			fmt::print(stderr, "Fail to open {} for reading.\n", input_file);
-			exit(2);
-		}
-		input = &inf;
-	}
-	else
-		input = &std::cin;
-	if (output_file != "-") {
-		outf.open(output_file, std::ios::out | std::ios::trunc);
-		if (!outf) {
-			fmt::print(stderr, "Fail to open {} for writing.\n", output_file);
-			exit(2);
-		}
-		output = &outf;
-	}
-	else
-		output = &std::cout;
+
+    inf.open(input_file, std::ios::in);
+    if (!inf) {
+        fmt::print(stderr, "Fail to open {} for reading.\n", input_file);
+        exit(2);
+    }
+    input = &inf;
+
 	if (program["-s"] == true && program["-c"] == true) {
 		fmt::print(stderr, "You can only perform compile or assemble at one time.");
 		exit(2);
 	}
 	if (program["-s"] == true) {
+        if (output_file != "-") {
+            outf.open(output_file, std::ios::out | std::ios::trunc);
+            if (!outf) {
+                fmt::print(stderr, "Fail to open {} for writing.\n", output_file);
+                exit(2);
+            }
+            output = &outf;
+        }
+        else
+            output = &std::cout;
         Analyse(*input, *output);
 	}
 	else if (program["-c"] == true) {
-
+        if (output_file == "-" || input_file == output_file) {
+            output_file = input_file + ".out";
+        }
+        outf.open(output_file, std::ios::binary | std::ios::out | std::ios::trunc);
+        if (!outf) {
+            inf.close();
+            exit(2);
+        }
+        output = &outf;
 		Binaryse(*input, *output);
 	}
 	else {

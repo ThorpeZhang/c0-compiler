@@ -1764,10 +1764,12 @@ namespace c0 {
 	            //否则，回退token，视为变量使用
 	            else {
 	                unreadToken();
-                    if(!isUseful(tk.GetValueString()))
+                    if(!isUseful(tk.GetValueString())) {
                         return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotDeclared);
-	                if(!isInitializedVariable(tk.GetValueString()))
+                    }
+	                if(!isInitializedVariable(tk.GetValueString())) {
                         return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotInitialized);
+                    }
                     auto index = getIndex(tk.GetValueString());
                     auto type = getType(tk.GetValueString());
                     // 加载变量地址
@@ -1941,8 +1943,9 @@ namespace c0 {
             return err;
             //return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
 
-        if(type == TokenType::VOID)
+        if(type == TokenType::VOID) {
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrReturnWrong);
+        }
 
 	    if(retType == TokenType::DOUBLE) {
 	        if(type == TokenType::INT || type == TokenType::CHAR)
@@ -2206,7 +2209,7 @@ namespace c0 {
 
 	bool Analyser::isConstant(const std::string&s) {
 	    int i;
-	    for(i = _current_level; i >= 0 && _consts[i].find(s) == _consts[i].end(); i--);
+	    for(i = _current_level; i >= 0 && _consts[i].find(s) == _consts[i].end(); i--){}
 		return _consts[i].find(s) != _consts[i].end();
 	}
 

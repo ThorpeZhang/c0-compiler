@@ -551,22 +551,28 @@ namespace c0 {
                             ch = current_char.value();
                             switch (ch) {
                                 case '\\':
-                                    ss << '\x5c';
+                                    ss << "\\x5c";
+                                    //ss << '\x5c';
                                     break;
                                 case 't':
-                                    ss << '\x09';
+                                    ss << "\\x09";
+                                    //ss << '\x09';
                                     break;
                                 case 'n':
-                                    ss << '\x0a';
+                                    ss << "\\x0a";
+                                    //ss << '\x0a';
                                     break;
                                 case 'r':
-                                    ss << '\x0d';
+                                    ss << "\\x0d";
+                                    //ss << '\x0d';
                                     break;
                                 case '\'':
-                                    ss << '\x27';
+                                    ss << "\\x27";
+                                    //ss << '\x27';
                                     break;
                                 case '\"':
-                                    ss << '\x22';
+                                    ss << "\\x22";
+                                    //ss << '\x22';
                                     break;
                                 case 'x': {
                                     ss << '\\';
