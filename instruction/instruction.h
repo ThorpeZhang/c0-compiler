@@ -31,16 +31,14 @@ namespace c0 {
 	};
 	
 	class Instruction final {
-    public:
-	    int32_t opn;
 	private:
-		//using int32_t = std::int32_t;
+		using int32_t = std::int32_t;
 	public:
 		friend void swap(Instruction& lhs, Instruction& rhs);
 	public:
-        Instruction(Operation opr) :opn(0),_opr(opr), _x(-1), _option(-1) {}
-		Instruction(Operation opr, int32_t x) : opn(0),_opr(opr), _x(x), _option(-1) {}
-        Instruction(Operation opr, int32_t x, int32_t option) : opn(0),_opr(opr), _x(x), _option(option) {}
+        Instruction(Operation opr) :_opr(opr), _x(-1), _option(-1) {}
+		Instruction(Operation opr, int32_t x) : _opr(opr), _x(x), _option(-1) {}
+        Instruction(Operation opr, int32_t x, int32_t option) : _opr(opr), _x(x), _option(option) {}
 		
 		Instruction() : Instruction(Operation::ILL, 0){}
 		Instruction(const Instruction& i) { _opr = i._opr; _x = i._x; _option = i._option; }
