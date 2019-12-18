@@ -122,10 +122,38 @@ namespace c0 {
             ////添加函数
             addFunc(funcName, retType, paramTypes);
 
+            ////初始化当前返回
+            isRet[_current_func] = false;
+            _current_if = 0;
+
             ////开始分析函数体
             auto err = analyseCompoundStatement();
             if(err.has_value())
                 return err;
+
+            ////分析分支返回
+            if(!isRet[_current_func]) {
+                if(_instructions[_current_func].back().GetOperation() == Operation::NOP) {
+                    _instructions[_current_func].pop_back();
+                }
+
+                if(retType == TokenType::INT) {
+                    _instructions[_current_func].emplace_back(Operation::IPUSH, 0);
+                    _instructions[_current_func].emplace_back(Operation::IRET);
+                }
+                else if(retType == TokenType::CHAR) {
+                    _instructions[_current_func].emplace_back(Operation::BIPUSH, 0);
+                    _instructions[_current_func].emplace_back(Operation::IRET);
+                }
+                else if(retType == TokenType::DOUBLE) {
+                    _instructions[_current_func].emplace_back(Operation::IPUSH, 0);
+                    _instructions[_current_func].emplace_back(Operation::I2D);
+                    _instructions[_current_func].emplace_back(Operation::DRET);
+                }
+                else {
+                    _instructions[_current_func].emplace_back(Operation::RET);
+                }
+            }
 
             //// 函数体分析完成，返回上一层符号表
             lastLevel();
@@ -357,6 +385,7 @@ namespace c0 {
         return {};
 	}
     std::optional<CompilationError> Analyser::analyseIfStatement() {
+	    _current_if++;
 	    ////进入此函数之前已经读到if
 	    auto next = nextToken();
 	    next = nextToken();
@@ -407,6 +436,7 @@ namespace c0 {
         if(err.has_value()){
             return err;
         }
+        _current_if--;
 
         _instructions[_current_func][_jmp].set_X(_instructions[_current_func].size());
         _instructions[_current_func].emplace_back(Operation::NOP);
@@ -434,8 +464,6 @@ namespace c0 {
             _instructions[_current_func][_jmp2].set_X(_instructions[_current_func].size());
             _instructions[_current_func].emplace_back(Operation::NOP);
         }
-
-
         return {};
 	}
 
@@ -841,6 +869,7 @@ namespace c0 {
     //     'case' (<integer-literal>|<char-literal>) ':' <statement>
     //    |'default' ':' <statement>
     std::optional<CompilationError> Analyser::analyseSwitchStatement() {
+	    _current_if++;
 	    //// 进入此函数前已经读到了switch
 	    auto next = nextToken();
 	    next = nextToken();
@@ -990,6 +1019,7 @@ namespace c0 {
 
         _instructions[_current_func].emplace_back(Operation::NOP);
         _current_loop--;
+        _current_if--;
         return {};
 	}
 
@@ -1911,6 +1941,9 @@ namespace c0 {
 
 	// <return-statement> ::= 'return' [<expression>] ';'
     std::optional<CompilationError> Analyser::analyseRetStatement() {
+	    if(_current_if == 0) {
+	        isRet[_current_func] = true;
+	    }
 	    ////进入此函数前已经读取return
 	    auto next = nextToken();
 	    int32_t _current = _nextFunc - 1;

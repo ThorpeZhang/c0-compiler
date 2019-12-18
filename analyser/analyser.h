@@ -26,7 +26,7 @@ namespace c0 {
 			: _tokens(std::move(v)), _offset(0), _instructions({}), _start_code({}), _current_pos(0, 0), _current_func(0),
 			_uninitialized_vars({}), _vars({}), _consts({}), _vars_type({}), _nextTokenIndex({0}), _current_level(-1),
 			_funcs({}), _funcs_index_name({}), _nextFunc(0), _consts_offset(0), _runtime_consts({}), _runtime_consts_index({}), _runtime_funcs({}),
-			_current_loop(-1), continues({}), breaks({}){}
+			_current_loop(-1), continues({}), breaks({}), _current_if(0), isRet({}){}
 		Analyser(Analyser&&) = delete;
 		Analyser(const Analyser&) = delete;
 		Analyser& operator=(Analyser) = delete;
@@ -229,5 +229,9 @@ namespace c0 {
 		//记录当前循环体中的continue和break在当前指令栈中的位置下标，以便于回溯修改指令中的参数
 		std::map<int32_t, std::vector<int32_t>> continues;
         std::map<int32_t, std::vector<int32_t>> breaks;
+
+        //记录当前if或者switch层数，用来记录函数分支返回
+        int32_t _current_if;
+        std::map<int32_t, bool> isRet;
 	};
 }
