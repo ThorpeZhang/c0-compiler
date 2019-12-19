@@ -2,10 +2,10 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
-      <config projectName="cc0" targetName="cc0_test" />
-      <config projectName="cc0" targetName="fmt" />
       <config projectName="cc0" targetName="cc0_lib" />
       <config projectName="cc0" targetName="cc0" />
+      <config projectName="cc0" targetName="fmt" />
+      <config projectName="cc0" targetName="cc0_test" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -16,8 +16,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b6a161f0-6329-45c8-bf2e-027c126b3f95" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/tokenizer/tokenizer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,6 +113,8 @@
       <workItem from="1576329618629" duration="17833000" />
       <workItem from="1576380047625" duration="57114000" />
       <workItem from="1576504078636" duration="37668000" />
+      <workItem from="1576654437810" duration="535000" />
+      <workItem from="1576743589846" duration="560000" />
     </task>
     <servers />
   </component>
@@ -135,9 +135,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="457" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1576588365331">
+    <state x="457" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1576743633256">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
+    <state x="457" y="260" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1576743633255" />
     <state x="457" y="260" key="#com.intellij.fileTypes.FileTypeChooser/1440.0.1112.834/0.0.1440.900@0.0.1440.900" timestamp="1576588365331" />
     <state width="1398" height="245" key="GridCell.Tab.0.bottom" timestamp="1576356182942">
       <screen x="0" y="0" width="1440" height="900" />
@@ -155,10 +156,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="1398" height="245" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1576356182942" />
-    <state x="397" y="267" key="com.intellij.ide.util.TipDialog" timestamp="1576504079602">
+    <state x="397" y="267" key="com.intellij.ide.util.TipDialog" timestamp="1576743591348">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="397" y="267" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1576504079602" />
+    <state x="397" y="267" key="com.intellij.ide.util.TipDialog/0.0.1440.900@0.0.1440.900" timestamp="1576743591348" />
     <state x="397" y="268" key="com.intellij.ide.util.TipDialog/0.23.1440.825@0.23.1440.825" timestamp="1576137552459" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1576400189214">
       <screen x="0" y="0" width="1440" height="900" />

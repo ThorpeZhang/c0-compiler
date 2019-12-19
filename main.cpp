@@ -129,8 +129,7 @@ void Binaryse(std::istream& input, std::ostream& output) {
         }
         else if(_type == "I") {
             output.write("\x01", 1);
-            int32_t v;
-            ss >> v;
+            int32_t v = std::stoi(ss.str().c_str(), NULL, 16);
             writeNBytes(&v, sizeof v);
         }
         else if(_type == "D") {

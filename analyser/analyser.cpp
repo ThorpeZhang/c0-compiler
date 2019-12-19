@@ -436,13 +436,13 @@ namespace c0 {
         if(err.has_value()){
             return err;
         }
-        _current_if--;
 
         _instructions[_current_func][_jmp].set_X(_instructions[_current_func].size());
         _instructions[_current_func].emplace_back(Operation::NOP);
 
         next = nextToken();
         if(!next.has_value() || next.value().GetType() != TokenType::ELSE) {
+            _current_if--;
             unreadToken();
             return {};
         }
@@ -464,6 +464,7 @@ namespace c0 {
             _instructions[_current_func][_jmp2].set_X(_instructions[_current_func].size());
             _instructions[_current_func].emplace_back(Operation::NOP);
         }
+        _current_if--;
         return {};
 	}
 
